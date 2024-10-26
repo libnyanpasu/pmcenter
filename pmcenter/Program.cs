@@ -4,10 +4,10 @@
 // Copyright (C) The pmcenter authors. Licensed under the Apache License (Version 2.0).
 */
 
-using MihaZupan;
 using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Net;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Bot;
@@ -70,7 +70,7 @@ namespace pmcenter
                     var langByEnvironmentVar = Environment.GetEnvironmentVariable("pmcenter_lang");
                     if (confByEnvironmentVar != null)
                     {
-                        if (File.Exists(confByEnvironmentVar))
+                        if (System.IO.File.Exists(confByEnvironmentVar))
                         {
                             Vars.ConfFile = confByEnvironmentVar;
                         }
@@ -81,7 +81,7 @@ namespace pmcenter
                     }
                     if (langByEnvironmentVar != null)
                     {
-                        if (File.Exists(langByEnvironmentVar))
+                        if (System.IO.File.Exists(langByEnvironmentVar))
                         {
                             Vars.LangFile = langByEnvironmentVar;
                         }
@@ -99,7 +99,7 @@ namespace pmcenter
 
                 Log($"==> Using configurations file: {Vars.ConfFile}");
                 Log($"==> Using language file: {Vars.LangFile}");
-                
+
                 Log("==> Running start operations...");
                 Log("==> Initializing module - CONF"); // BY DEFAULT CONF & LANG ARE NULL! PROCEED BEFORE DOING ANYTHING. <- well anyway we have default values
                 await InitConf().ConfigureAwait(false);
@@ -178,25 +178,32 @@ namespace pmcenter
                 if (Vars.CurrentConf.UseProxy)
                 {
                     Log("Activating SOCKS5 proxy...");
-                    List<ProxyInfo> proxyInfoList = new List<ProxyInfo>();
+                    new WebProxy();
+                    List<WebProxy> proxyInfoList = new List<WebProxy>();
                     foreach (var proxyInfo in Vars.CurrentConf.Socks5Proxies)
                     {
-                        var newProxyInfo = new ProxyInfo(proxyInfo.ServerName,
-                                                            proxyInfo.ServerPort,
-                                                            proxyInfo.Username,
-                                                            proxyInfo.ProxyPass);
-                        proxyInfoList.Add(newProxyInfo);
+                        var proxyUri = new Uri($"http://{proxyInfo.ServerName}:{proxyInfo.ServerPort}");
+
+                        proxyInfoList.Add(new WebProxy(proxyUri)
+                        {
+                            Credentials = new NetworkCredential(proxyInfo.Username, proxyInfo.ProxyPass)
+                        });
                     }
-                    var proxy = new HttpToSocks5Proxy(proxyInfoList.ToArray())
-                    {
-                        ResolveHostnamesLocally = Vars.CurrentConf.ResolveHostnamesLocally
-                    };
+                    var proxy = new LatencyBasedProxy(proxyInfoList, "https://telegram.org/");
+                    //{
+                    //    ResolveHostnamesLocally = Vars.CurrentConf.ResolveHostnamesLocally
+                    //};
                     Log("SOCKS5 proxy is enabled.");
-                    Vars.Bot = new TelegramBotClient(Vars.CurrentConf.APIKey, proxy);
+                    var handler = new HttpClientHandler()
+                    {
+                        Proxy = proxy
+                    };
+                    var client = new HttpClient(handler);
+                    Vars.Bot = new TelegramBotClient(Vars.CurrentConf.APIKey, client, cancellationToken: Vars.CancellationTokenSource.Token);
                 }
                 else
                 {
-                    Vars.Bot = new TelegramBotClient(Vars.CurrentConf.APIKey);
+                    Vars.Bot = new TelegramBotClient(Vars.CurrentConf.APIKey, cancellationToken: Vars.CancellationTokenSource.Token);
                 }
                 Check("Bot initialized");
 
@@ -209,12 +216,7 @@ namespace pmcenter
 
                 Log("Hooking message processors...");
                 Vars.Bot.OnUpdate += BotProcess.OnUpdate;
-                Log("Starting receiving...");
-                Vars.Bot.StartReceiving(new[]
-                {
-                    UpdateType.Message,
-                    UpdateType.CallbackQuery
-                });
+                Vars.Bot.OnError += BotProcess.OnError;
                 Check("Update receiving started");
 
                 Log("==> Startup complete!");
@@ -227,9 +229,9 @@ namespace pmcenter
                         _ = await Vars.Bot.SendTextMessageAsync(Vars.CurrentConf.OwnerUID,
                                                             Vars.CurrentLang.Message_BotStarted
                                                                 .Replace("$1", $"{Math.Round(Vars.StartSW.Elapsed.TotalSeconds, 2)}s"),
-                                                            ParseMode.Markdown,
-                                                            false,
-                                                            false).ConfigureAwait(false);
+                                                            parseMode: ParseMode.MarkdownV2,
+                                                            protectContent: false,
+                                                            disableNotification: false).ConfigureAwait(false);
                     }
                 }
                 catch (Exception ex)
@@ -247,9 +249,9 @@ namespace pmcenter
                         _ = await Vars.Bot.SendTextMessageAsync(Vars.CurrentConf.OwnerUID,
                                                                 Vars.CurrentLang.Message_NetCore31Required
                                                                     .Replace("$1", netCoreVersion.ToString()),
-                                                                ParseMode.Markdown,
-                                                                false,
-                                                                false).ConfigureAwait(false);
+                                                                parseMode: ParseMode.MarkdownV2,
+                                                                protectContent: false,
+                                                                disableNotification: false).ConfigureAwait(false);
                         Vars.CurrentConf.DisableNetCore3Check = true;
                         _ = await SaveConf(false, true);
                     }
@@ -269,9 +271,9 @@ namespace pmcenter
                                                        Vars.CurrentLang.Message_LangVerMismatch
                                                            .Replace("$1", Vars.CurrentLang.TargetVersion)
                                                            .Replace("$2", Vars.AppVer.ToString()),
-                                                       ParseMode.Markdown,
-                                                       false,
-                                                       false).ConfigureAwait(false);
+                                                       parseMode: ParseMode.Markdown,
+                                                       protectContent: false,
+                                                       disableNotification: false).ConfigureAwait(false);
                 }
                 Check("Language version mismatch checked");
                 Check("Complete");

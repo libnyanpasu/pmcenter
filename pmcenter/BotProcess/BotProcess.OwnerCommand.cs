@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using static pmcenter.Methods.Logging;
@@ -24,7 +25,7 @@ namespace pmcenter
                                                                        Vars.CurrentConf.ContChatTarget,
                                                                        update.Message.Chat.Id,
                                                                        update.Message.MessageId,
-                                                                       Vars.CurrentConf.DisableNotifications).ConfigureAwait(false);
+                                                                       disableNotification: Vars.CurrentConf.DisableNotifications).ConfigureAwait(false);
                 if (Vars.CurrentConf.EnableMsgLink)
                 {
                     Log($"Recording message link: {forwarded.MessageId} -> {update.Message.MessageId} in {update.Message.From.Id}", "BOT");
@@ -39,7 +40,10 @@ namespace pmcenter
                 {
                     var replyToMessage = Vars.CurrentLang.Message_ReplySuccessful;
                     replyToMessage = replyToMessage.Replace("$1", $"[{Vars.CurrentConf.ContChatTarget}](tg://user?id={Vars.CurrentConf.ContChatTarget})");
-                    _ = await Vars.Bot.SendTextMessageAsync(update.Message.From.Id, replyToMessage, ParseMode.Markdown, false, false, update.Message.MessageId).ConfigureAwait(false);
+                    _ = await Vars.Bot.SendTextMessageAsync(update.Message.From.Id, replyToMessage, parseMode: ParseMode.MarkdownV2,
+            protectContent: false,
+            disableNotification: Vars.CurrentConf.DisableNotifications,
+            messageThreadId: update.Message.MessageId).ConfigureAwait(false);
                 }
                 Log($"Successfully passed owner's reply to UID: {Vars.CurrentConf.ContChatTarget}", "BOT");
                 return;
@@ -48,10 +52,10 @@ namespace pmcenter
             _ = await Vars.Bot.SendTextMessageAsync(
                 update.Message.From.Id,
                 Vars.CurrentLang.Message_CommandNotReplying,
-                ParseMode.Markdown,
-                false,
-                Vars.CurrentConf.DisableNotifications,
-                update.Message.MessageId).ConfigureAwait(false);
+                parseMode: ParseMode.MarkdownV2,
+            protectContent: false,
+            disableNotification: Vars.CurrentConf.DisableNotifications,
+            messageThreadId: update.Message.MessageId).ConfigureAwait(false);
         }
     }
 }

@@ -5,11 +5,11 @@
 */
 
 using System;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Bot;
-using Telegram.Bot.Args;
+using Telegram.Bot.Polling;
+using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
 namespace pmcenter
@@ -18,20 +18,26 @@ namespace pmcenter
     {
         private static readonly Conf.ConfObj newConf = new Conf.ConfObj();
         private static TelegramBotClient testBot;
+        private static CancellationTokenSource botCancelSource;
         private static bool isUidReceived = false;
         private static long receivedUid = -1;
         private static string nickname = "";
-        private static void OnUpdate(object sender, UpdateEventArgs e)
+        private static async Task OnUpdate(Update update)
         {
             Say("Update received.");
             Say(".. Processing...");
             if (!isUidReceived)
             {
                 isUidReceived = true;
-                receivedUid = e.Update.Message.From.Id;
-                nickname = string.IsNullOrEmpty(e.Update.Message.From.LastName) ? e.Update.Message.From.FirstName : $"{e.Update.Message.From.FirstName} {e.Update.Message.From.LastName}";
-                testBot.StopReceiving();
+                receivedUid = update.Message.From.Id;
+                nickname = string.IsNullOrEmpty(update.Message.From.LastName) ? update.Message.From.FirstName : $"{update.Message.From.FirstName} {update.Message.From.LastName}";
+                botCancelSource.Cancel();
             }
+        }
+
+        public static async Task OnError(Exception exception, HandleErrorSource source)
+        {
+            Say($"polling update failure: {exception.Message}, source: {source.ToString()}");
         }
 
         private static void Say(string input)
@@ -74,39 +80,39 @@ namespace pmcenter
             var choice = Console.ReadLine();
             if (choice.ToLower() != "n")
             {
-                if (File.Exists(Vars.ConfFile))
+                if (System.IO.File.Exists(Vars.ConfFile))
                 {
                     Say("Warning: pmcenter.json already exists.");
                     SIn("..       Moving the existing one to pmcenter.json.bak...");
-                    if (File.Exists($"{Vars.ConfFile}.bak"))
+                    if (System.IO.File.Exists($"{Vars.ConfFile}.bak"))
                     {
                         SIn(" File exists, deleting...");
-                        File.Delete($"{Vars.ConfFile}.bak");
+                        System.IO.File.Delete($"{Vars.ConfFile}.bak");
                     }
-                    File.Move(Vars.ConfFile, $"{Vars.ConfFile}.bak");
+                    System.IO.File.Move(Vars.ConfFile, $"{Vars.ConfFile}.bak");
                     Say(" Done!");
                 }
                 SIn($"Saving configurations to {Vars.ConfFile}...");
                 Vars.CurrentConf = newConf;
                 _ = await Conf.SaveConf().ConfigureAwait(false);
                 Say(" Done!");
-                if (File.Exists(Vars.LangFile))
+                if (System.IO.File.Exists(Vars.LangFile))
                 {
                     Say("Warning: pmcenter_locale.json already exists.");
                     SIn("..       Moving the existing one to pmcenter_locale.json.bak...");
-                    if (File.Exists($"{Vars.LangFile}.bak"))
+                    if (System.IO.File.Exists($"{Vars.LangFile}.bak"))
                     {
                         SIn(" File exists, deleting...");
-                        File.Delete($"{Vars.LangFile}.bak");
+                        System.IO.File.Delete($"{Vars.LangFile}.bak");
                     }
-                    File.Move(Vars.LangFile, $"{Vars.LangFile}.bak");
+                    System.IO.File.Move(Vars.LangFile, $"{Vars.LangFile}.bak");
                     Say(" Done!");
                 }
                 SIn($"Saving language file to {Vars.LangFile}...");
                 Vars.CurrentLang = new Lang.Language();
                 _ = await Lang.SaveLang().ConfigureAwait(false);
                 Say(" Done!");
-                
+
                 Say(">> Setup complete!");
                 Say("   Thanks for using pmcenter!");
                 Say("   Check out pmcenter's GitHub repository at:");
@@ -135,7 +141,8 @@ namespace pmcenter
             SIn($".. Testing API Key: {key}...");
             try
             {
-                testBot = new TelegramBotClient(key);
+                botCancelSource = new CancellationTokenSource();
+                testBot = new TelegramBotClient(key, cancellationToken: botCancelSource.Token);
                 if (!await testBot.TestApiAsync().ConfigureAwait(false))
                 {
                     throw (new ArgumentException("API Key is not valid."));
@@ -163,13 +170,13 @@ namespace pmcenter
             {
                 Say(".. Preparing for automatic UID detection...");
                 testBot.OnUpdate += OnUpdate;
-                testBot.StartReceiving(new UpdateType[] { UpdateType.Message });
+                testBot.OnError += OnError;
                 Say("Say something to your bot on Telegram. We'll detect your UID automatically.");
                 while (!isUidReceived)
                 {
                     Thread.Sleep(200);
                 }
-                _ = await testBot.SendTextMessageAsync(receivedUid, $"👋 *Hello my owner!* Your UID `{receivedUid}` is now being saved.", ParseMode.Markdown);
+                _ = await testBot.SendTextMessageAsync(receivedUid, $"👋 *Hello my owner!* Your UID `{receivedUid}` is now being saved.", parseMode: ParseMode.MarkdownV2);
                 Say($"Hello, [{nickname}]! Your UID has been detected as {receivedUid}.");
                 SIn($".. Saving UID: {receivedUid}...");
                 newConf.OwnerUID = receivedUid;

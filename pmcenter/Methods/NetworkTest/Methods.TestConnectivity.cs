@@ -1,5 +1,6 @@
 using System;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using static pmcenter.Methods.Logging;
 
@@ -11,15 +12,22 @@ namespace pmcenter
         {
             try
             {
-                var req = WebRequest.CreateHttp(target);
-                req.ProtocolVersion = new Version(2, 0);
-                req.Timeout = 10000;
-                _ = await req.GetResponseAsync().ConfigureAwait(false);
+                HttpClient client = new()
+                {
+                    Timeout = TimeSpan.FromMilliseconds(10000)
+                };
+                client.DefaultRequestVersion = new Version(2, 0);
+                var response = await client.GetAsync(target).ConfigureAwait(false);
+                response.EnsureSuccessStatusCode();
+                return true;
+            }
+            catch (HttpRequestException ex) when (ex.StatusCode is HttpStatusCode.BadRequest or HttpStatusCode.Forbidden && ignore45)
+            {
+                // 忽略 4xx 和 5xx 的响应错误，根据 ignore45 返回 true
                 return true;
             }
             catch (WebException ex)
             {
-                if (ex.Status == WebExceptionStatus.ProtocolError && ignore45) return true;
                 Log($"Connectivity to {target} is unavailable: {ex.Message}");
                 return false;
             }

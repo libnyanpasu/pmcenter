@@ -17,10 +17,10 @@ namespace pmcenter.Commands
             _ = await botClient.SendTextMessageAsync(
                 update.Message.From.Id,
                 Vars.CurrentLang.Message_Performance_Inited,
-                ParseMode.Markdown,
-                false,
-                Vars.CurrentConf.DisableNotifications,
-                update.Message.MessageId).ConfigureAwait(false);
+                parseMode: ParseMode.MarkdownV2,
+                            protectContent: false,
+                            disableNotification: Vars.CurrentConf.DisableNotifications,
+                            messageThreadId: update.Message.MessageId).ConfigureAwait(false);
             var performanceChecker = new Thread(() => Methods.ThrPerform());
             performanceChecker.Start();
             Thread.Sleep(1000);
@@ -33,10 +33,10 @@ namespace pmcenter.Commands
             _ = await botClient.SendTextMessageAsync(
                 update.Message.From.Id,
                 Vars.CurrentLang.Message_Performance_Results.Replace("$1", (Vars.PerformanceScore / 5) + "Mop/s"),
-                ParseMode.Markdown,
-                false,
-                Vars.CurrentConf.DisableNotifications,
-                update.Message.MessageId).ConfigureAwait(false);
+                parseMode: ParseMode.MarkdownV2,
+            protectContent: false,
+            disableNotification: Vars.CurrentConf.DisableNotifications,
+            messageThreadId: update.Message.MessageId).ConfigureAwait(false);
             return true;
         }
     }

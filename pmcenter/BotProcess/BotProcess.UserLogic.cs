@@ -1,5 +1,6 @@
 ﻿using pmcenter.CallbackActions;
 using System.Threading.Tasks;
+using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -23,10 +24,10 @@ namespace pmcenter
                 Log("Stopped: forwarding is currently paused.", "BOT", LogLevel.Info);
                 _ = await Vars.Bot.SendTextMessageAsync(update.Message.From.Id,
                                                     Vars.CurrentLang.Message_UserServicePaused,
-                                                    ParseMode.Markdown,
-                                                    false,
-                                                    false,
-                                                    update.Message.MessageId).ConfigureAwait(false);
+                                                    parseMode: ParseMode.MarkdownV2,
+            protectContent: false,
+            disableNotification: Vars.CurrentConf.DisableNotifications,
+            messageThreadId: update.Message.MessageId).ConfigureAwait(false);
                 return;
             }
 
@@ -52,7 +53,7 @@ namespace pmcenter
             var forwardedMessage = await Vars.Bot.ForwardMessageAsync(Vars.CurrentConf.OwnerUID,
                                                                           update.Message.From.Id,
                                                                           update.Message.MessageId,
-                                                                          Vars.CurrentConf.DisableNotifications).ConfigureAwait(false);
+                                                                          disableNotification: Vars.CurrentConf.DisableNotifications).ConfigureAwait(false);
             Vars.CurrentConf.Statistics.TotalForwardedToOwner += 1;
             // preprocess message link
             var link = new Conf.MessageIDLink()
@@ -69,11 +70,11 @@ namespace pmcenter
                 link.OwnerSessionActionMessageID = (await Vars.Bot.SendTextMessageAsync(
                     Vars.CurrentConf.OwnerUID,
                     Vars.CurrentLang.Message_Action_ChooseAction,
-                    ParseMode.Markdown,
-                    false,
-                    true,
-                    forwardedMessage.MessageId,
-                    markup
+                    parseMode: ParseMode.MarkdownV2,
+            protectContent: false,
+            disableNotification: true,
+            messageThreadId: forwardedMessage.MessageId,
+                    replyMarkup: markup
                     ).ConfigureAwait(false)).MessageId;
             }
             // process message links
@@ -104,10 +105,10 @@ namespace pmcenter
                                                     Vars.CurrentLang.Message_ForwarderNotReal
                                                         .Replace("$2", update.Message.From.Id.ToString())
                                                         .Replace("$1", $"[{GetComposedUsername(update.Message.From)}](tg://user?id={update.Message.From.Id})"),
-                                                    ParseMode.Markdown,
-                                                    false,
-                                                    Vars.CurrentConf.DisableNotifications,
-                                                    forwardedMessage.MessageId).ConfigureAwait(false);
+                                                   parseMode: ParseMode.MarkdownV2,
+            protectContent: false,
+            disableNotification: Vars.CurrentConf.DisableNotifications,
+            messageThreadId: forwardedMessage.MessageId).ConfigureAwait(false);
 
             // process cc
             if (Vars.CurrentConf.EnableCc)
@@ -118,10 +119,10 @@ namespace pmcenter
             {
                 _ = await Vars.Bot.SendTextMessageAsync(update.Message.From.Id,
                                                     Vars.CurrentLang.Message_ForwardedToOwner,
-                                                    ParseMode.Markdown,
-                                                    false,
-                                                    false,
-                                                    update.Message.MessageId).ConfigureAwait(false);
+                                                    parseMode: ParseMode.MarkdownV2,
+            protectContent: false,
+            disableNotification: false,
+            messageThreadId: update.Message.MessageId).ConfigureAwait(false);
             }
             AddRateLimit(update.Message.From.Id);
         }

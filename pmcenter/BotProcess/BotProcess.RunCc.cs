@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using static pmcenter.Methods.Logging;
@@ -19,7 +20,7 @@ namespace pmcenter
                     var forwardedMessageCc = await Vars.Bot.ForwardMessageAsync(id,
                         update.Message.From.Id,
                         update.Message.MessageId,
-                        Vars.CurrentConf.DisableNotifications).ConfigureAwait(false);
+                        disableNotification: Vars.CurrentConf.DisableNotifications).ConfigureAwait(false);
                     // check if forwarded from channels
                     if (update.Message.ForwardFrom == null && update.Message.ForwardFromChat != null)
                     {
@@ -28,10 +29,10 @@ namespace pmcenter
                                                             Vars.CurrentLang.Message_ForwarderNotReal
                                                                 .Replace("$2", update.Message.From.Id.ToString())
                                                                 .Replace("$1", "[" + update.Message.From.FirstName + " " + update.Message.From.LastName + "](tg://user?id=" + update.Message.From.Id + ")"),
-                                                            ParseMode.Markdown,
-                                                            false,
-                                                            Vars.CurrentConf.DisableNotifications,
-                                                            forwardedMessageCc.MessageId).ConfigureAwait(false);
+                                                            parseMode: ParseMode.MarkdownV2,
+            protectContent: false,
+            disableNotification: Vars.CurrentConf.DisableNotifications,
+            messageThreadId: update.Message.MessageId).ConfigureAwait(false);
                     }
                     if (update.Message.ForwardFrom != null && update.Message.ForwardFromChat == null)
                     {
@@ -43,9 +44,10 @@ namespace pmcenter
                                                                 Vars.CurrentLang.Message_ForwarderNotReal
                                                                     .Replace("$2", update.Message.From.Id.ToString())
                                                                     .Replace("$1", "[" + update.Message.From.FirstName + " " + update.Message.From.LastName + "](tg://user?id=" + update.Message.From.Id + ")"),
-                                                                ParseMode.Markdown,
-                                                                false,
-                                                                Vars.CurrentConf.DisableNotifications,
+                                                                parseMode: ParseMode.MarkdownV2,
+
+            disableNotification: Vars.CurrentConf.DisableNotifications,
+            messageThreadId:
                                                                 forwardedMessageCc.MessageId).ConfigureAwait(false);
                         }
                     }

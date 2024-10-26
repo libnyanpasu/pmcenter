@@ -19,10 +19,10 @@ namespace pmcenter.Commands
                 _ = await botClient.SendTextMessageAsync(
                     update.Message.From.Id,
                     Vars.CurrentLang.Message_ConfReset_Started,
-                    ParseMode.Markdown,
-                    false,
-                    Vars.CurrentConf.DisableNotifications,
-                    update.Message.MessageId).ConfigureAwait(false);
+                    parseMode: ParseMode.MarkdownV2,
+                            protectContent: false,
+                            disableNotification: Vars.CurrentConf.DisableNotifications,
+                            messageThreadId: update.Message.MessageId).ConfigureAwait(false);
                 var ownerId = Vars.CurrentConf.OwnerUID;
                 var apiKey = Vars.CurrentConf.APIKey;
                 Vars.CurrentConf = new Conf.ConfObj
@@ -36,10 +36,10 @@ namespace pmcenter.Commands
                 _ = await botClient.SendTextMessageAsync(
                     update.Message.From.Id,
                     Vars.CurrentLang.Message_ConfReset_Done,
-                    ParseMode.Markdown,
-                    false,
-                    Vars.CurrentConf.DisableNotifications,
-                    update.Message.MessageId).ConfigureAwait(false);
+                    parseMode: ParseMode.MarkdownV2,
+            protectContent: false,
+            disableNotification: Vars.CurrentConf.DisableNotifications,
+            messageThreadId: update.Message.MessageId).ConfigureAwait(false);
                 await Methods.ExitApp(0);
                 return true;
             }
@@ -48,10 +48,10 @@ namespace pmcenter.Commands
                 _ = await botClient.SendTextMessageAsync(
                     update.Message.From.Id,
                     Vars.CurrentLang.Message_ConfReset_Inited,
-                    ParseMode.Markdown,
-                    false,
-                    Vars.CurrentConf.DisableNotifications,
-                    update.Message.MessageId).ConfigureAwait(false);
+                   parseMode: ParseMode.MarkdownV2,
+            protectContent: false,
+            disableNotification: Vars.CurrentConf.DisableNotifications,
+            messageThreadId: update.Message.MessageId).ConfigureAwait(false);
                 Vars.ConfValidator = new Thread(() => Methods.ThrDoResetConfCount());
                 Vars.ConfValidator.Start();
                 return true;

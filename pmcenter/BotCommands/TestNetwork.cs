@@ -25,10 +25,10 @@ namespace pmcenter.Commands
                     .Replace("$1", latencyToGh + "ms")
                     .Replace("$2", latencyToTg + "ms")
                     .Replace("$3", latencyToCi + "ms"),
-                ParseMode.Markdown,
-                false,
-                Vars.CurrentConf.DisableNotifications,
-                update.Message.MessageId).ConfigureAwait(false);
+                parseMode: ParseMode.MarkdownV2,
+                            protectContent: false,
+                            disableNotification: Vars.CurrentConf.DisableNotifications,
+                            messageThreadId: update.Message.MessageId).ConfigureAwait(false);
             return true;
         }
     }

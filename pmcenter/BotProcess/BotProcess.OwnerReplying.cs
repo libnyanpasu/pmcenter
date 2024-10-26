@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using static pmcenter.Methods.Logging;
@@ -11,31 +12,32 @@ namespace pmcenter
         {
             // check anonymous forward (5.5.0 new feature compatibility fix)
             var link = Methods.GetLinkByOwnerMsgID(update.Message.ReplyToMessage.MessageId);
+            User? forwardFrom = null;
             if (link != null && !link.IsFromOwner)
             {
                 Log($"Found corresponding message link for message #{update.Message.ReplyToMessage.MessageId}, which was actually forwarded from {link.TGUser.Id}, patching user information from database...", "BOT");
-                update.Message.ReplyToMessage.ForwardFrom = link.TGUser;
+                forwardFrom = link.TGUser;
             }
-            if ((update.Message.ReplyToMessage.ForwardFrom == null) && (update.Message.Text.ToLowerInvariant() != "/retract"))
+            if ((forwardFrom == null) && (update.Message.Text.ToLowerInvariant() != "/retract"))
             {
                 // The owner is replying to bot messages. (no forwardfrom)
                 _ = await Vars.Bot.SendTextMessageAsync(
                     update.Message.From.Id,
                     Vars.CurrentLang.Message_CommandNotReplyingValidMessage,
-                    ParseMode.Markdown,
-                    false,
-                    Vars.CurrentConf.DisableNotifications,
-                    update.Message.MessageId).ConfigureAwait(false);
+                    parseMode: ParseMode.MarkdownV2,
+            protectContent: false,
+            disableNotification: Vars.CurrentConf.DisableNotifications,
+            messageThreadId: update.Message.MessageId).ConfigureAwait(false);
                 // The message is forwarded anonymously
                 if (!string.IsNullOrEmpty(update.Message.ReplyToMessage.ForwardSenderName) && !Vars.CurrentConf.DisableMessageLinkTip)
                 {
                     _ = await Vars.Bot.SendTextMessageAsync(
                         update.Message.From.Id,
                         Vars.CurrentLang.Message_MsgLinkTip,
-                        ParseMode.Markdown,
-                        false,
-                        Vars.CurrentConf.DisableNotifications,
-                        update.Message.MessageId).ConfigureAwait(false);
+                        parseMode: ParseMode.MarkdownV2,
+            protectContent: false,
+            disableNotification: Vars.CurrentConf.DisableNotifications,
+            messageThreadId: update.Message.MessageId).ConfigureAwait(false);
                     Vars.CurrentConf.DisableMessageLinkTip = true;
                 }
                 return;
@@ -52,7 +54,7 @@ namespace pmcenter
                     update.Message.ReplyToMessage.ForwardFrom.Id,
                     update.Message.Chat.Id,
                     update.Message.MessageId,
-                    Vars.CurrentConf.DisableNotifications).ConfigureAwait(false);
+                    disableNotification: Vars.CurrentConf.DisableNotifications).ConfigureAwait(false);
             if (Vars.CurrentConf.EnableMsgLink)
             {
                 Log($"Recording message link: user {forwarded.MessageId} <-> owner {update.Message.MessageId}, user: {update.Message.ReplyToMessage.ForwardFrom.Id}", "BOT");
@@ -68,7 +70,10 @@ namespace pmcenter
             {
                 var replyToMessage = Vars.CurrentLang.Message_ReplySuccessful;
                 replyToMessage = replyToMessage.Replace("$1", $"[{Methods.GetComposedUsername(update.Message.ReplyToMessage.ForwardFrom)}](tg://user?id={update.Message.ReplyToMessage.ForwardFrom.Id})");
-                _ = await Vars.Bot.SendTextMessageAsync(update.Message.From.Id, replyToMessage, ParseMode.Markdown, false, false, update.Message.MessageId).ConfigureAwait(false);
+                _ = await Vars.Bot.SendTextMessageAsync(update.Message.From.Id, replyToMessage, parseMode: ParseMode.MarkdownV2,
+            protectContent: false,
+            disableNotification: Vars.CurrentConf.DisableNotifications,
+            messageThreadId: update.Message.MessageId).ConfigureAwait(false);
             }
             Log($"Successfully passed owner's reply to {Methods.GetComposedUsername(update.Message.ReplyToMessage.ForwardFrom, true, true)}", "BOT");
         }

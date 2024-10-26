@@ -17,10 +17,10 @@ namespace pmcenter.Commands
             _ = await botClient.SendTextMessageAsync(
                 update.Message.From.Id,
                 Vars.CurrentLang.Message_Restarting,
-                ParseMode.Markdown,
-                false,
-                Vars.CurrentConf.DisableNotifications,
-                update.Message.MessageId).ConfigureAwait(false);
+                parseMode: ParseMode.MarkdownV2,
+                            protectContent: false,
+                            disableNotification: Vars.CurrentConf.DisableNotifications,
+                            messageThreadId: update.Message.MessageId).ConfigureAwait(false);
             Thread.Sleep(5000);
             await Methods.ExitApp(0);
             return true;

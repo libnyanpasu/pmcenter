@@ -18,20 +18,20 @@ namespace pmcenter.Commands
                 _ = await botClient.SendTextMessageAsync(
                     update.Message.From.Id,
                     Vars.CurrentLang.Message_OwnerStart,
-                    ParseMode.Markdown,
-                    false,
-                    Vars.CurrentConf.DisableNotifications,
-                    update.Message.MessageId).ConfigureAwait(false);
+                    parseMode: ParseMode.MarkdownV2,
+                            protectContent: false,
+                            disableNotification: Vars.CurrentConf.DisableNotifications,
+                            messageThreadId: update.Message.MessageId).ConfigureAwait(false);
             }
             else
             {
                 _ = await botClient.SendTextMessageAsync(
                     update.Message.From.Id,
                     Vars.CurrentLang.Message_UserStartDefault,
-                    ParseMode.Markdown,
-                    false,
-                    false,
-                    update.Message.MessageId).ConfigureAwait(false);
+                    parseMode: ParseMode.MarkdownV2,
+            protectContent: false,
+            disableNotification: Vars.CurrentConf.DisableNotifications,
+            messageThreadId: update.Message.MessageId).ConfigureAwait(false);
             }
             return true;
         }

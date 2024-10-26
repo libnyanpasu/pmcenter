@@ -1,6 +1,6 @@
 using System;
 using System.Diagnostics;
-using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using static pmcenter.Methods.Logging;
 
@@ -13,13 +13,14 @@ namespace pmcenter
             var reqSw = new Stopwatch();
             try
             {
-                var req = WebRequest.CreateHttp(target);
+                var client = new HttpClient();
                 reqSw.Start();
-                _ = await req.GetResponseAsync().ConfigureAwait(false);
+                var response = await client.GetAsync(target).ConfigureAwait(false);
+                response.EnsureSuccessStatusCode();
                 reqSw.Stop();
                 return reqSw.Elapsed;
             }
-            catch (WebException)
+            catch (HttpRequestException)
             {
                 reqSw.Stop();
                 return reqSw.Elapsed;

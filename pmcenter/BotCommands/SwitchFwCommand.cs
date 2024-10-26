@@ -19,10 +19,10 @@ namespace pmcenter.Commands
             isPausedNow ?
                 Vars.CurrentLang.Message_ServicePaused :
                 Vars.CurrentLang.Message_ServiceResumed,
-            ParseMode.Markdown,
-            false,
-            Vars.CurrentConf.DisableNotifications,
-            update.Message.MessageId).ConfigureAwait(false);
+            parseMode: ParseMode.MarkdownV2,
+                            protectContent: false,
+                            disableNotification: Vars.CurrentConf.DisableNotifications,
+                            messageThreadId: update.Message.MessageId).ConfigureAwait(false);
 
             return true;
         }
