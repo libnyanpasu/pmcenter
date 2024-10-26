@@ -40,14 +40,14 @@ namespace pmcenter.Commands
                 Vars.CurrentConf.ConfSyncInterval = interval;
                 _ = await botClient.SendTextMessageAsync(update.Message.From.Id,
                     Vars.CurrentLang.Message_AutoSaveEnabled.Replace("$1", (interval / 1000).ToString()),
-                    parseMode: ParseMode.MarkdownV2,
+                    parseMode: ParseMode.Markdown,
             protectContent: false,
             disableNotification: Vars.CurrentConf.DisableNotifications,
             messageThreadId: update.Message.MessageId).ConfigureAwait(false);
                 if (interval < 5000)
                     _ = await botClient.SendTextMessageAsync(update.Message.From.Id,
                     Vars.CurrentLang.Message_AutoSaveIntervalTooShort.Replace("$1", interval.ToString()),
-                    parseMode: ParseMode.MarkdownV2,
+                    parseMode: ParseMode.Markdown,
             protectContent: false,
             disableNotification: Vars.CurrentConf.DisableNotifications,
             messageThreadId: update.Message.MessageId).ConfigureAwait(false);
@@ -63,7 +63,7 @@ namespace pmcenter.Commands
                 Log($"Failed to process autosave command: {ex}", "BOT", LogLevel.Error);
                 _ = await botClient.SendTextMessageAsync(update.Message.From.Id,
                     Vars.CurrentLang.Message_GeneralFailure.Replace("$1", ex.ToString()),
-                    parseMode: ParseMode.MarkdownV2,
+                    parseMode: ParseMode.Markdown,
             protectContent: false,
             disableNotification: Vars.CurrentConf.DisableNotifications,
             messageThreadId: update.Message.MessageId).ConfigureAwait(false);

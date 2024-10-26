@@ -19,7 +19,7 @@ namespace pmcenter.Commands
                 isDisabledNow ?
                     Vars.CurrentLang.Message_NotificationsOff :
                     Vars.CurrentLang.Message_NotificationsOn,
-                parseMode: ParseMode.MarkdownV2,
+                parseMode: ParseMode.Markdown,
                             protectContent: false,
                             disableNotification: Vars.CurrentConf.DisableNotifications,
                             messageThreadId: update.Message.MessageId).ConfigureAwait(false);

@@ -12,7 +12,8 @@ namespace pmcenter
         {
             Log("Attempting to exit gracefully...");
             Log("Stopping bot message receiving...");
-            Vars.CancellationTokenSource.Cancel();
+            Vars.Bot.OnUpdate -= BotProcess.OnUpdate;
+            Vars.Bot.OnError -= BotProcess.OnError;
             Log("Waiting for background workers to exit (timeout: 10s)...");
             var sw = new Stopwatch();
             sw.Start();

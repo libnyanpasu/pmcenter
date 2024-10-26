@@ -57,7 +57,7 @@ namespace pmcenter.Commands
             _ = await botClient.SendTextMessageAsync(
                 update.Message.From.Id,
                 messageStr,
-                parseMode: ParseMode.MarkdownV2,
+                parseMode: ParseMode.Markdown,
                             protectContent: false,
                             disableNotification: Vars.CurrentConf.DisableNotifications,
                             messageThreadId: update.Message.MessageId).ConfigureAwait(false);

@@ -40,7 +40,7 @@ namespace pmcenter
                 {
                     var replyToMessage = Vars.CurrentLang.Message_ReplySuccessful;
                     replyToMessage = replyToMessage.Replace("$1", $"[{Vars.CurrentConf.ContChatTarget}](tg://user?id={Vars.CurrentConf.ContChatTarget})");
-                    _ = await Vars.Bot.SendTextMessageAsync(update.Message.From.Id, replyToMessage, parseMode: ParseMode.MarkdownV2,
+                    _ = await Vars.Bot.SendTextMessageAsync(update.Message.From.Id, replyToMessage, parseMode: ParseMode.Markdown,
             protectContent: false,
             disableNotification: Vars.CurrentConf.DisableNotifications,
             messageThreadId: update.Message.MessageId).ConfigureAwait(false);
@@ -52,7 +52,7 @@ namespace pmcenter
             _ = await Vars.Bot.SendTextMessageAsync(
                 update.Message.From.Id,
                 Vars.CurrentLang.Message_CommandNotReplying,
-                parseMode: ParseMode.MarkdownV2,
+                parseMode: ParseMode.Markdown,
             protectContent: false,
             disableNotification: Vars.CurrentConf.DisableNotifications,
             messageThreadId: update.Message.MessageId).ConfigureAwait(false);

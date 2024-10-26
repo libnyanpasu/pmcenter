@@ -182,11 +182,11 @@ namespace pmcenter
                     List<WebProxy> proxyInfoList = new List<WebProxy>();
                     foreach (var proxyInfo in Vars.CurrentConf.Socks5Proxies)
                     {
-                        var proxyUri = new Uri($"http://{proxyInfo.ServerName}:{proxyInfo.ServerPort}");
+                        var proxyUri = new Uri($"socks5://{proxyInfo.ServerName}:{proxyInfo.ServerPort}");
 
                         proxyInfoList.Add(new WebProxy(proxyUri)
                         {
-                            Credentials = new NetworkCredential(proxyInfo.Username, proxyInfo.ProxyPass)
+                            Credentials = proxyInfo.Username == null ? null : new NetworkCredential(proxyInfo.Username, proxyInfo.ProxyPass)
                         });
                     }
                     var proxy = new LatencyBasedProxy(proxyInfoList, "https://telegram.org/");
@@ -203,6 +203,7 @@ namespace pmcenter
                 }
                 else
                 {
+                    Log("SOCKS5 proxy is disabled.");
                     Vars.Bot = new TelegramBotClient(Vars.CurrentConf.APIKey, cancellationToken: Vars.CancellationTokenSource.Token);
                 }
                 Check("Bot initialized");
@@ -229,7 +230,7 @@ namespace pmcenter
                         _ = await Vars.Bot.SendTextMessageAsync(Vars.CurrentConf.OwnerUID,
                                                             Vars.CurrentLang.Message_BotStarted
                                                                 .Replace("$1", $"{Math.Round(Vars.StartSW.Elapsed.TotalSeconds, 2)}s"),
-                                                            parseMode: ParseMode.MarkdownV2,
+                                                            parseMode: ParseMode.Markdown,
                                                             protectContent: false,
                                                             disableNotification: false).ConfigureAwait(false);
                     }
@@ -249,7 +250,7 @@ namespace pmcenter
                         _ = await Vars.Bot.SendTextMessageAsync(Vars.CurrentConf.OwnerUID,
                                                                 Vars.CurrentLang.Message_NetCore31Required
                                                                     .Replace("$1", netCoreVersion.ToString()),
-                                                                parseMode: ParseMode.MarkdownV2,
+                                                                parseMode: ParseMode.Markdown,
                                                                 protectContent: false,
                                                                 disableNotification: false).ConfigureAwait(false);
                         Vars.CurrentConf.DisableNetCore3Check = true;

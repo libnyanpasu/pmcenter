@@ -8,6 +8,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Bot;
+using Telegram.Bot.Extensions;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
@@ -31,7 +32,8 @@ namespace pmcenter
                 isUidReceived = true;
                 receivedUid = update.Message.From.Id;
                 nickname = string.IsNullOrEmpty(update.Message.From.LastName) ? update.Message.From.FirstName : $"{update.Message.From.FirstName} {update.Message.From.LastName}";
-                botCancelSource.Cancel();
+                testBot.OnUpdate -= OnUpdate;
+                testBot.OnError -= OnError;
             }
         }
 
@@ -176,7 +178,8 @@ namespace pmcenter
                 {
                     Thread.Sleep(200);
                 }
-                _ = await testBot.SendTextMessageAsync(receivedUid, $"👋 *Hello my owner!* Your UID `{receivedUid}` is now being saved.", parseMode: ParseMode.MarkdownV2);
+                
+                _ = await testBot.SendTextMessageAsync(receivedUid, Markdown.Escape($"👋 *Hello my owner!\n* Your UID `{receivedUid}` is now being saved."), parseMode: ParseMode.Markdown);
                 Say($"Hello, [{nickname}]! Your UID has been detected as {receivedUid}.");
                 SIn($".. Saving UID: {receivedUid}...");
                 newConf.OwnerUID = receivedUid;

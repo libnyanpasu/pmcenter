@@ -29,7 +29,7 @@ namespace pmcenter
                                                             Vars.CurrentLang.Message_ForwarderNotReal
                                                                 .Replace("$2", update.Message.From.Id.ToString())
                                                                 .Replace("$1", "[" + update.Message.From.FirstName + " " + update.Message.From.LastName + "](tg://user?id=" + update.Message.From.Id + ")"),
-                                                            parseMode: ParseMode.MarkdownV2,
+                                                            parseMode: ParseMode.Markdown,
             protectContent: false,
             disableNotification: Vars.CurrentConf.DisableNotifications,
             messageThreadId: update.Message.MessageId).ConfigureAwait(false);
@@ -44,7 +44,7 @@ namespace pmcenter
                                                                 Vars.CurrentLang.Message_ForwarderNotReal
                                                                     .Replace("$2", update.Message.From.Id.ToString())
                                                                     .Replace("$1", "[" + update.Message.From.FirstName + " " + update.Message.From.LastName + "](tg://user?id=" + update.Message.From.Id + ")"),
-                                                                parseMode: ParseMode.MarkdownV2,
+                                                                parseMode: ParseMode.Markdown,
 
             disableNotification: Vars.CurrentConf.DisableNotifications,
             messageThreadId:

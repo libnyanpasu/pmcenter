@@ -87,7 +87,7 @@ namespace pmcenter
                         _ = await Vars.Bot.SendTextMessageAsync(
                             chatId: Vars.CurrentConf.OwnerUID,
                             text: Vars.CurrentLang.Message_GeneralFailure.Replace("$1", ex.ToString()),
-                            parseMode: ParseMode.MarkdownV2,
+                            parseMode: ParseMode.Markdown,
                             protectContent: false,
                             disableNotification: Vars.CurrentConf.DisableNotifications
                         ).ConfigureAwait(false);

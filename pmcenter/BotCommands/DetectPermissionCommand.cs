@@ -22,7 +22,7 @@ namespace pmcenter.Commands
                     .Replace("$1", confWritable.ToString())
                     .Replace("$2", langWritable.ToString())
                 ,
-                parseMode: ParseMode.MarkdownV2,
+                parseMode: ParseMode.Markdown,
                             protectContent: false,
                             disableNotification: Vars.CurrentConf.DisableNotifications,
                             messageThreadId: update.Message.MessageId).ConfigureAwait(false);

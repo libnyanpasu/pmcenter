@@ -17,7 +17,7 @@ namespace pmcenter.Commands
             _ = await botClient.SendTextMessageAsync(
                 update.Message.From.Id,
                 Vars.CurrentLang.Message_Performance_Inited,
-                parseMode: ParseMode.MarkdownV2,
+                parseMode: ParseMode.Markdown,
                             protectContent: false,
                             disableNotification: Vars.CurrentConf.DisableNotifications,
                             messageThreadId: update.Message.MessageId).ConfigureAwait(false);
@@ -33,7 +33,7 @@ namespace pmcenter.Commands
             _ = await botClient.SendTextMessageAsync(
                 update.Message.From.Id,
                 Vars.CurrentLang.Message_Performance_Results.Replace("$1", (Vars.PerformanceScore / 5) + "Mop/s"),
-                parseMode: ParseMode.MarkdownV2,
+                parseMode: ParseMode.Markdown,
             protectContent: false,
             disableNotification: Vars.CurrentConf.DisableNotifications,
             messageThreadId: update.Message.MessageId).ConfigureAwait(false);

@@ -31,6 +31,7 @@ namespace pmcenter
                 if (!_isInitialized)
                 {
                     _fastestProxy = GetFastestProxyAsync().GetAwaiter().GetResult();
+                    Logging.Log($"Selected fastest proxy: {_fastestProxy.Address}");
                     _isInitialized = true;
                 }
 
@@ -67,6 +68,13 @@ namespace pmcenter
                     {
                         // 忽略失败的代理，继续尝试下一个
                     }
+                }
+
+                if (fastestProxy == null)
+                {
+                    throw new Exception(
+                        "No proxy is available. Please check your proxy list and network connectivity."
+                        );
                 }
 
                 return fastestProxy;

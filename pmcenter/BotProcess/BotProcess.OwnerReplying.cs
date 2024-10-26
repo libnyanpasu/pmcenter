@@ -24,7 +24,7 @@ namespace pmcenter
                 _ = await Vars.Bot.SendTextMessageAsync(
                     update.Message.From.Id,
                     Vars.CurrentLang.Message_CommandNotReplyingValidMessage,
-                    parseMode: ParseMode.MarkdownV2,
+                    parseMode: ParseMode.Markdown,
             protectContent: false,
             disableNotification: Vars.CurrentConf.DisableNotifications,
             messageThreadId: update.Message.MessageId).ConfigureAwait(false);
@@ -34,7 +34,7 @@ namespace pmcenter
                     _ = await Vars.Bot.SendTextMessageAsync(
                         update.Message.From.Id,
                         Vars.CurrentLang.Message_MsgLinkTip,
-                        parseMode: ParseMode.MarkdownV2,
+                        parseMode: ParseMode.Markdown,
             protectContent: false,
             disableNotification: Vars.CurrentConf.DisableNotifications,
             messageThreadId: update.Message.MessageId).ConfigureAwait(false);
@@ -70,7 +70,7 @@ namespace pmcenter
             {
                 var replyToMessage = Vars.CurrentLang.Message_ReplySuccessful;
                 replyToMessage = replyToMessage.Replace("$1", $"[{Methods.GetComposedUsername(update.Message.ReplyToMessage.ForwardFrom)}](tg://user?id={update.Message.ReplyToMessage.ForwardFrom.Id})");
-                _ = await Vars.Bot.SendTextMessageAsync(update.Message.From.Id, replyToMessage, parseMode: ParseMode.MarkdownV2,
+                _ = await Vars.Bot.SendTextMessageAsync(update.Message.From.Id, replyToMessage, parseMode: ParseMode.Markdown,
             protectContent: false,
             disableNotification: Vars.CurrentConf.DisableNotifications,
             messageThreadId: update.Message.MessageId).ConfigureAwait(false);

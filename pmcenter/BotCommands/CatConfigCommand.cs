@@ -21,7 +21,7 @@ namespace pmcenter.Commands
                 _ = await botClient.SendTextMessageAsync(
                     update.Message.From.Id,
                     Vars.CurrentLang.Message_CurrentConf.Replace("$1", text),
-                    parseMode: ParseMode.MarkdownV2,
+                    parseMode: ParseMode.Markdown,
                             protectContent: false,
                             disableNotification: Vars.CurrentConf.DisableNotifications,
                             messageThreadId: update.Message.MessageId).ConfigureAwait(false);
@@ -32,7 +32,7 @@ namespace pmcenter.Commands
                 _ = await botClient.SendTextMessageAsync(
                     update.Message.From.Id,
                     Vars.CurrentLang.Message_CurrentConf.Replace("$1", texts[0]),
-                   parseMode: ParseMode.MarkdownV2,
+                   parseMode: ParseMode.Markdown,
             protectContent: false,
             disableNotification: Vars.CurrentConf.DisableNotifications,
             messageThreadId: update.Message.MessageId).ConfigureAwait(false);
@@ -41,7 +41,7 @@ namespace pmcenter.Commands
                     _ = await botClient.SendTextMessageAsync(
                         update.Message.From.Id,
                         ($"`{texts[i]}`"),
-                        parseMode: ParseMode.MarkdownV2,
+                        parseMode: ParseMode.Markdown,
             protectContent: false,
             disableNotification: Vars.CurrentConf.DisableNotifications,
             messageThreadId: update.Message.MessageId).ConfigureAwait(false);

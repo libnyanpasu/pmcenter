@@ -24,7 +24,7 @@ namespace pmcenter
                 Log("Stopped: forwarding is currently paused.", "BOT", LogLevel.Info);
                 _ = await Vars.Bot.SendTextMessageAsync(update.Message.From.Id,
                                                     Vars.CurrentLang.Message_UserServicePaused,
-                                                    parseMode: ParseMode.MarkdownV2,
+                                                    parseMode: ParseMode.Markdown,
             protectContent: false,
             disableNotification: Vars.CurrentConf.DisableNotifications,
             messageThreadId: update.Message.MessageId).ConfigureAwait(false);
@@ -70,7 +70,7 @@ namespace pmcenter
                 link.OwnerSessionActionMessageID = (await Vars.Bot.SendTextMessageAsync(
                     Vars.CurrentConf.OwnerUID,
                     Vars.CurrentLang.Message_Action_ChooseAction,
-                    parseMode: ParseMode.MarkdownV2,
+                    parseMode: ParseMode.Markdown,
             protectContent: false,
             disableNotification: true,
             messageThreadId: forwardedMessage.MessageId,
@@ -105,7 +105,7 @@ namespace pmcenter
                                                     Vars.CurrentLang.Message_ForwarderNotReal
                                                         .Replace("$2", update.Message.From.Id.ToString())
                                                         .Replace("$1", $"[{GetComposedUsername(update.Message.From)}](tg://user?id={update.Message.From.Id})"),
-                                                   parseMode: ParseMode.MarkdownV2,
+                                                   parseMode: ParseMode.Markdown,
             protectContent: false,
             disableNotification: Vars.CurrentConf.DisableNotifications,
             messageThreadId: forwardedMessage.MessageId).ConfigureAwait(false);
@@ -119,7 +119,7 @@ namespace pmcenter
             {
                 _ = await Vars.Bot.SendTextMessageAsync(update.Message.From.Id,
                                                     Vars.CurrentLang.Message_ForwardedToOwner,
-                                                    parseMode: ParseMode.MarkdownV2,
+                                                    parseMode: ParseMode.Markdown,
             protectContent: false,
             disableNotification: false,
             messageThreadId: update.Message.MessageId).ConfigureAwait(false);

@@ -30,7 +30,7 @@ namespace pmcenter.Commands
                     _ = await botClient.SendTextMessageAsync(
                         update.Message.From.Id,
                         updateString,
-                        parseMode: ParseMode.MarkdownV2,
+                        parseMode: ParseMode.Markdown,
                             protectContent: false,
                             disableNotification: Vars.CurrentConf.DisableNotifications,
                             messageThreadId: update.Message.MessageId).ConfigureAwait(false);
@@ -44,7 +44,7 @@ namespace pmcenter.Commands
                             .Replace("$1", latest.Latest)
                             .Replace("$2", Vars.AppVer.ToString())
                             .Replace("$3", latest.UpdateCollection[currentLocalizedIndex].Details),
-                        parseMode: ParseMode.MarkdownV2,
+                        parseMode: ParseMode.Markdown,
             protectContent: false,
             disableNotification: Vars.CurrentConf.DisableNotifications,
             messageThreadId: update.Message.MessageId).ConfigureAwait(false);
@@ -57,7 +57,7 @@ namespace pmcenter.Commands
                 _ = await botClient.SendTextMessageAsync(
                     update.Message.From.Id,
                     errorString,
-                    parseMode: ParseMode.MarkdownV2,
+                    parseMode: ParseMode.Markdown,
             protectContent: false,
             disableNotification: Vars.CurrentConf.DisableNotifications,
             messageThreadId: update.Message.MessageId).ConfigureAwait(false);

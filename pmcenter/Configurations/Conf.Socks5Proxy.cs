@@ -8,13 +8,13 @@ namespace pmcenter
             {
                 ServerName = "example.com";
                 ServerPort = 1080;
-                Username = "username";
-                ProxyPass = "password";
+                Username = null;
+                ProxyPass = null;
             }
             public string ServerName { get; set; }
             public int ServerPort { get; set; }
-            public string Username { get; set; }
-            public string ProxyPass { get; set; }
+            public string? Username { get; set; }
+            public string? ProxyPass { get; set; }
         }
     }
 }

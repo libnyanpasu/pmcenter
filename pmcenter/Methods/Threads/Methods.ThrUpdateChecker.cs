@@ -32,7 +32,7 @@ namespace pmcenter
                             .Replace("$3", GetUpdateLevel(latest.UpdateLevel));
                         _ = await Vars.Bot.SendTextMessageAsync(Vars.CurrentConf.OwnerUID,
                                                             updateString,
-                                                            parseMode: ParseMode.MarkdownV2,
+                                                            parseMode: ParseMode.Markdown,
             protectContent: false,
             disableNotification: isNotificationDisabled).ConfigureAwait(false);
                         return; // Since this thread wouldn't be useful any longer, exit.
