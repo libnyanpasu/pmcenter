@@ -1,13 +1,10 @@
-FROM mcr.microsoft.com/dotnet/core/runtime:3.1-alpine
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
 
 ARG LOCALE=en
-WORKDIR /opt
+WORKDIR /opt/pmcenter
 
-RUN mkdir pmcenter \
-    && cd pmcenter \
-    && wget https://see.wtf/pmcenter-update -O pmcenter.zip \
-    && unzip pmcenter.zip \
-    && rm pmcenter.zip
-ADD locales/pmcenter_locale_$LOCALE.json /opt/pmcenter/pmcenter_locale.json
+COPY pmcenter/bin/Release/net8.0/ .
 
-CMD ["dotnet","/opt/pmcenter/pmcenter.dll"]
+ADD locales/pmcenter_locale_$LOCALE.json ./pmcenter_locale.json
+
+CMD ["dotnet", "./pmcenter.dll"]

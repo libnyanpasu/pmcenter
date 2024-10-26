@@ -1,0 +1,57 @@
+name: Build dotnet
+
+on:
+  push:
+    branches: ["master"]
+
+permissions:
+  contents: read
+  packages: write # Grant write permission to packages
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore dependencies
+        working-directory: pmcenter
+        run: dotnet restore --configfile NuGet.conf
+
+      - name: Build
+        working-directory: pmcenter
+        run: dotnet build --no-restore -c Release
+
+      - name: Upload GitHub Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pmcenter
+          path: ./pmcenter/bin/Release/net8.0/**/*
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/pmcenter:latest
+            ghcr.io/${{ github.repository_owner }}/pmcenter:${{ github.sha }}
