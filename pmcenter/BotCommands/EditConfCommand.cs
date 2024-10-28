@@ -30,9 +30,9 @@ namespace pmcenter.Commands
                         update.Message.From.Id,
                         Vars.CurrentLang.Message_APIKeyChanged,
                         parseMode: ParseMode.Markdown,
-                            protectContent: false,
+                            linkPreviewOptions: false,
                             disableNotification: Vars.CurrentConf.DisableNotifications,
-                            messageThreadId: update.Message.MessageId).ConfigureAwait(false);
+                            replyParameters: update.Message.MessageId).ConfigureAwait(false);
                     Vars.RestartRequired = true;
                 }
                 if (temp.ConfSyncInterval == 0)
@@ -53,9 +53,9 @@ namespace pmcenter.Commands
                     update.Message.From.Id,
                     Vars.CurrentLang.Message_ConfigUpdated,
                    parseMode: ParseMode.Markdown,
-            protectContent: false,
+            linkPreviewOptions: false,
             disableNotification: Vars.CurrentConf.DisableNotifications,
-            messageThreadId: update.Message.MessageId).ConfigureAwait(false);
+            replyParameters: update.Message.MessageId).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -63,9 +63,9 @@ namespace pmcenter.Commands
                     update.Message.From.Id,
                     Vars.CurrentLang.Message_GeneralFailure.Replace("$1", ex.Message),
                     parseMode: ParseMode.Markdown,
-            protectContent: false,
+            linkPreviewOptions: false,
             disableNotification: Vars.CurrentConf.DisableNotifications,
-            messageThreadId: update.Message.MessageId).ConfigureAwait(false);
+            replyParameters: update.Message.MessageId).ConfigureAwait(false);
             }
             return true;
         }

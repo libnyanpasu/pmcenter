@@ -29,9 +29,9 @@ namespace pmcenter.Commands
                         _ = await botClient.SendTextMessageAsync(update.Message.From.Id,
                             Vars.CurrentLang.Message_AutoSaveDisabled,
                             parseMode: ParseMode.Markdown,
-                            protectContent: false,
+                            linkPreviewOptions: false,
                             disableNotification: Vars.CurrentConf.DisableNotifications,
-                            messageThreadId: update.Message.MessageId).ConfigureAwait(false);
+                            replyParameters: update.Message.MessageId).ConfigureAwait(false);
                         if (Vars.SyncConf != null) Vars.SyncConf.Interrupt();
                         return true;
                     }
@@ -41,16 +41,16 @@ namespace pmcenter.Commands
                 _ = await botClient.SendTextMessageAsync(update.Message.From.Id,
                     Vars.CurrentLang.Message_AutoSaveEnabled.Replace("$1", (interval / 1000).ToString()),
                     parseMode: ParseMode.Markdown,
-            protectContent: false,
+            linkPreviewOptions: false,
             disableNotification: Vars.CurrentConf.DisableNotifications,
-            messageThreadId: update.Message.MessageId).ConfigureAwait(false);
+            replyParameters: update.Message.MessageId).ConfigureAwait(false);
                 if (interval < 5000)
                     _ = await botClient.SendTextMessageAsync(update.Message.From.Id,
                     Vars.CurrentLang.Message_AutoSaveIntervalTooShort.Replace("$1", interval.ToString()),
                     parseMode: ParseMode.Markdown,
-            protectContent: false,
+            linkPreviewOptions: false,
             disableNotification: Vars.CurrentConf.DisableNotifications,
-            messageThreadId: update.Message.MessageId).ConfigureAwait(false);
+            replyParameters: update.Message.MessageId).ConfigureAwait(false);
                 if ((Vars.SyncConf == null) || !Vars.SyncConf.IsAlive)
                 {
                     Vars.SyncConf = new Thread(() => Methods.ThrSyncConf());
@@ -64,9 +64,9 @@ namespace pmcenter.Commands
                 _ = await botClient.SendTextMessageAsync(update.Message.From.Id,
                     Vars.CurrentLang.Message_GeneralFailure.Replace("$1", ex.ToString()),
                     parseMode: ParseMode.Markdown,
-            protectContent: false,
+            linkPreviewOptions: false,
             disableNotification: Vars.CurrentConf.DisableNotifications,
-            messageThreadId: update.Message.MessageId).ConfigureAwait(false);
+            replyParameters: update.Message.MessageId).ConfigureAwait(false);
                 return true;
             }
         }

@@ -20,9 +20,9 @@ namespace pmcenter.Commands
                     update.Message.From.Id,
                     Vars.CurrentLang.Message_ConfReset_Started,
                     parseMode: ParseMode.Markdown,
-                            protectContent: false,
+                            linkPreviewOptions: false,
                             disableNotification: Vars.CurrentConf.DisableNotifications,
-                            messageThreadId: update.Message.MessageId).ConfigureAwait(false);
+                            replyParameters: update.Message.MessageId).ConfigureAwait(false);
                 var ownerId = Vars.CurrentConf.OwnerUID;
                 var apiKey = Vars.CurrentConf.APIKey;
                 Vars.CurrentConf = new Conf.ConfObj
@@ -37,9 +37,9 @@ namespace pmcenter.Commands
                     update.Message.From.Id,
                     Vars.CurrentLang.Message_ConfReset_Done,
                     parseMode: ParseMode.Markdown,
-            protectContent: false,
+            linkPreviewOptions: false,
             disableNotification: Vars.CurrentConf.DisableNotifications,
-            messageThreadId: update.Message.MessageId).ConfigureAwait(false);
+            replyParameters: update.Message.MessageId).ConfigureAwait(false);
                 await Methods.ExitApp(0);
                 return true;
             }
@@ -49,9 +49,9 @@ namespace pmcenter.Commands
                     update.Message.From.Id,
                     Vars.CurrentLang.Message_ConfReset_Inited,
                    parseMode: ParseMode.Markdown,
-            protectContent: false,
+            linkPreviewOptions: false,
             disableNotification: Vars.CurrentConf.DisableNotifications,
-            messageThreadId: update.Message.MessageId).ConfigureAwait(false);
+            replyParameters: update.Message.MessageId).ConfigureAwait(false);
                 Vars.ConfValidator = new Thread(() => Methods.ThrDoResetConfCount());
                 Vars.ConfValidator.Start();
                 return true;

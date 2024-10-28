@@ -22,9 +22,9 @@ namespace pmcenter.Commands
                     update.Message.From.Id,
                     Vars.CurrentLang.Message_CurrentConf.Replace("$1", text),
                     parseMode: ParseMode.Markdown,
-                            protectContent: false,
+                            linkPreviewOptions: false,
                             disableNotification: Vars.CurrentConf.DisableNotifications,
-                            messageThreadId: update.Message.MessageId).ConfigureAwait(false);
+                            replyParameters: update.Message.MessageId).ConfigureAwait(false);
                 return true;
             }
             else
@@ -33,18 +33,18 @@ namespace pmcenter.Commands
                     update.Message.From.Id,
                     Vars.CurrentLang.Message_CurrentConf.Replace("$1", texts[0]),
                    parseMode: ParseMode.Markdown,
-            protectContent: false,
+            linkPreviewOptions: false,
             disableNotification: Vars.CurrentConf.DisableNotifications,
-            messageThreadId: update.Message.MessageId).ConfigureAwait(false);
+            replyParameters: update.Message.MessageId).ConfigureAwait(false);
                 for (int i = 1; i < texts.Count; i++)
                 {
                     _ = await botClient.SendTextMessageAsync(
                         update.Message.From.Id,
                         ($"`{texts[i]}`"),
                         parseMode: ParseMode.Markdown,
-            protectContent: false,
+            linkPreviewOptions: false,
             disableNotification: Vars.CurrentConf.DisableNotifications,
-            messageThreadId: update.Message.MessageId).ConfigureAwait(false);
+            replyParameters: update.Message.MessageId).ConfigureAwait(false);
                 }
                 return true;
             }

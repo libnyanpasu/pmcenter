@@ -88,7 +88,7 @@ namespace pmcenter
                             chatId: Vars.CurrentConf.OwnerUID,
                             text: Vars.CurrentLang.Message_GeneralFailure.Replace("$1", ex.ToString()),
                             parseMode: ParseMode.Markdown,
-                            protectContent: false,
+                            linkPreviewOptions: false,
                             disableNotification: Vars.CurrentConf.DisableNotifications
                         ).ConfigureAwait(false);
                     }

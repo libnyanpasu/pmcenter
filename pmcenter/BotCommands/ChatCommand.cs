@@ -56,9 +56,9 @@ namespace pmcenter.Commands
                 _ = await botClient.SendTextMessageAsync(update.Message.From.Id,
                                                     Vars.CurrentLang.Message_ContinuedChatEnabled.Replace("$1", replacementText),
                                                     parseMode: ParseMode.Markdown,
-                            protectContent: false,
+                            linkPreviewOptions: false,
                             disableNotification: Vars.CurrentConf.DisableNotifications,
-                            messageThreadId: update.Message.MessageId).ConfigureAwait(false);
+                            replyParameters: update.Message.MessageId).ConfigureAwait(false);
                 return true;
             }
             catch (Exception ex)
@@ -67,9 +67,9 @@ namespace pmcenter.Commands
                 _ = await botClient.SendTextMessageAsync(update.Message.From.Id,
                     Vars.CurrentLang.Message_GeneralFailure.Replace("$1", ex.ToString()),
                     parseMode: ParseMode.Markdown,
-            protectContent: false,
+            linkPreviewOptions: false,
             disableNotification: Vars.CurrentConf.DisableNotifications,
-            messageThreadId: update.Message.MessageId).ConfigureAwait(false);
+            replyParameters: update.Message.MessageId).ConfigureAwait(false);
                 return true;
             }
         }

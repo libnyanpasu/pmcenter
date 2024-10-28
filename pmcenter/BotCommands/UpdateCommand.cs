@@ -31,17 +31,17 @@ namespace pmcenter.Commands
                         update.Message.From.Id,
                         updateString,
                         parseMode: ParseMode.Markdown,
-                            protectContent: false,
+                            linkPreviewOptions: false,
                             disableNotification: Vars.CurrentConf.DisableNotifications,
-                            messageThreadId: update.Message.MessageId).ConfigureAwait(false);
+                            replyParameters: update.Message.MessageId).ConfigureAwait(false);
                     // \ updating! /
                     _ = await botClient.SendTextMessageAsync(
                         update.Message.From.Id,
                         Vars.CurrentLang.Message_UpdateProcessing,
                         parseMode: ParseMode.Markdown,
-                            protectContent: false,
+                            linkPreviewOptions: false,
                             disableNotification: Vars.CurrentConf.DisableNotifications,
-                            messageThreadId: update.Message.MessageId).ConfigureAwait(false);
+                            replyParameters: update.Message.MessageId).ConfigureAwait(false);
                     // download compiled package
                     await DownloadUpdatesAsync(latest, currentLocalizedIndex).ConfigureAwait(false);
                     // update languages
@@ -52,9 +52,9 @@ namespace pmcenter.Commands
                         update.Message.From.Id,
                         Vars.CurrentLang.Message_UpdateFinalizing,
                        parseMode: ParseMode.Markdown,
-            protectContent: false,
+            linkPreviewOptions: false,
             disableNotification: Vars.CurrentConf.DisableNotifications,
-            messageThreadId: update.Message.MessageId).ConfigureAwait(false);
+            replyParameters: update.Message.MessageId).ConfigureAwait(false);
                     Log("Exiting program... (Let the daemon do the restart job)", "BOT");
                     await ExitApp(0);
                     return true;
@@ -69,9 +69,9 @@ namespace pmcenter.Commands
                             .Replace("$2", Vars.AppVer.ToString())
                             .Replace("$3", latest.UpdateCollection[currentLocalizedIndex].Details),
                        parseMode: ParseMode.Markdown,
-            protectContent: false,
+            linkPreviewOptions: false,
             disableNotification: Vars.CurrentConf.DisableNotifications,
-            messageThreadId: update.Message.MessageId).ConfigureAwait(false);
+            replyParameters: update.Message.MessageId).ConfigureAwait(false);
                     return true;
                 }
             }
@@ -82,9 +82,9 @@ namespace pmcenter.Commands
                     update.Message.From.Id,
                     errorString,
                     parseMode: ParseMode.Markdown,
-            protectContent: false,
+            linkPreviewOptions: false,
             disableNotification: Vars.CurrentConf.DisableNotifications,
-            messageThreadId: update.Message.MessageId).ConfigureAwait(false);
+            replyParameters: update.Message.MessageId).ConfigureAwait(false);
                 return true;
             }
         }

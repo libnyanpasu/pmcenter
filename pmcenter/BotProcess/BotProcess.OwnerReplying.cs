@@ -25,9 +25,9 @@ namespace pmcenter
                     update.Message.From.Id,
                     Vars.CurrentLang.Message_CommandNotReplyingValidMessage,
                     parseMode: ParseMode.Markdown,
-            protectContent: false,
+            linkPreviewOptions: false,
             disableNotification: Vars.CurrentConf.DisableNotifications,
-            messageThreadId: update.Message.MessageId).ConfigureAwait(false);
+            replyParameters: update.Message.MessageId).ConfigureAwait(false);
                 // The message is forwarded anonymously
                 if (!string.IsNullOrEmpty(update.Message.ReplyToMessage.ForwardSenderName) && !Vars.CurrentConf.DisableMessageLinkTip)
                 {
@@ -35,9 +35,9 @@ namespace pmcenter
                         update.Message.From.Id,
                         Vars.CurrentLang.Message_MsgLinkTip,
                         parseMode: ParseMode.Markdown,
-            protectContent: false,
+            linkPreviewOptions: false,
             disableNotification: Vars.CurrentConf.DisableNotifications,
-            messageThreadId: update.Message.MessageId).ConfigureAwait(false);
+            replyParameters: update.Message.MessageId).ConfigureAwait(false);
                     Vars.CurrentConf.DisableMessageLinkTip = true;
                 }
                 return;
@@ -71,9 +71,9 @@ namespace pmcenter
                 var replyToMessage = Vars.CurrentLang.Message_ReplySuccessful;
                 replyToMessage = replyToMessage.Replace("$1", $"[{Methods.GetComposedUsername(update.Message.ReplyToMessage.ForwardFrom)}](tg://user?id={update.Message.ReplyToMessage.ForwardFrom.Id})");
                 _ = await Vars.Bot.SendTextMessageAsync(update.Message.From.Id, replyToMessage, parseMode: ParseMode.Markdown,
-            protectContent: false,
+            linkPreviewOptions: false,
             disableNotification: Vars.CurrentConf.DisableNotifications,
-            messageThreadId: update.Message.MessageId).ConfigureAwait(false);
+            replyParameters: update.Message.MessageId).ConfigureAwait(false);
             }
             Log($"Successfully passed owner's reply to {Methods.GetComposedUsername(update.Message.ReplyToMessage.ForwardFrom, true, true)}", "BOT");
         }

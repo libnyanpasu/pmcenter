@@ -23,9 +23,9 @@ namespace pmcenter.Commands
                     .Replace("$2", langWritable.ToString())
                 ,
                 parseMode: ParseMode.Markdown,
-                            protectContent: false,
+                            linkPreviewOptions: false,
                             disableNotification: Vars.CurrentConf.DisableNotifications,
-                            messageThreadId: update.Message.MessageId).ConfigureAwait(false);
+                            replyParameters: update.Message.MessageId).ConfigureAwait(false);
             return true;
         }
     }

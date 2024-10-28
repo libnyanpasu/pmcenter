@@ -58,9 +58,9 @@ namespace pmcenter.Commands
                 update.Message.From.Id,
                 messageStr,
                 parseMode: ParseMode.Markdown,
-                            protectContent: false,
+                            linkPreviewOptions: false,
                             disableNotification: Vars.CurrentConf.DisableNotifications,
-                            messageThreadId: update.Message.MessageId).ConfigureAwait(false);
+                            replyParameters: update.Message.MessageId).ConfigureAwait(false);
             return true;
         }
     }

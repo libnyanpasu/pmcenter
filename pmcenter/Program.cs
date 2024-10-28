@@ -231,7 +231,7 @@ namespace pmcenter
                                                             Vars.CurrentLang.Message_BotStarted
                                                                 .Replace("$1", $"{Math.Round(Vars.StartSW.Elapsed.TotalSeconds, 2)}s"),
                                                             parseMode: ParseMode.Markdown,
-                                                            protectContent: false,
+                                                            linkPreviewOptions: false,
                                                             disableNotification: false).ConfigureAwait(false);
                     }
                 }
@@ -251,7 +251,7 @@ namespace pmcenter
                                                                 Vars.CurrentLang.Message_NetCore31Required
                                                                     .Replace("$1", netCoreVersion.ToString()),
                                                                 parseMode: ParseMode.Markdown,
-                                                                protectContent: false,
+                                                                linkPreviewOptions: false,
                                                                 disableNotification: false).ConfigureAwait(false);
                         Vars.CurrentConf.DisableNetCore3Check = true;
                         _ = await SaveConf(false, true);
@@ -273,7 +273,7 @@ namespace pmcenter
                                                            .Replace("$1", Vars.CurrentLang.TargetVersion)
                                                            .Replace("$2", Vars.AppVer.ToString()),
                                                        parseMode: ParseMode.Markdown,
-                                                       protectContent: false,
+                                                       linkPreviewOptions: false,
                                                        disableNotification: false).ConfigureAwait(false);
                 }
                 Check("Language version mismatch checked");

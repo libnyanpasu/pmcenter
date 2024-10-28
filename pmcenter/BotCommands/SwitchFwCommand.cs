@@ -20,9 +20,9 @@ namespace pmcenter.Commands
                 Vars.CurrentLang.Message_ServicePaused :
                 Vars.CurrentLang.Message_ServiceResumed,
             parseMode: ParseMode.Markdown,
-                            protectContent: false,
+                            linkPreviewOptions: false,
                             disableNotification: Vars.CurrentConf.DisableNotifications,
-                            messageThreadId: update.Message.MessageId).ConfigureAwait(false);
+                            replyParameters: update.Message.MessageId).ConfigureAwait(false);
 
             return true;
         }

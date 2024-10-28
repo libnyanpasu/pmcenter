@@ -17,9 +17,9 @@ namespace pmcenter.Commands
                 Vars.CurrentConf.OwnerUID,
                 Vars.CurrentLang.Message_Help,
                 parseMode: ParseMode.Markdown,
-                            protectContent: false,
+                            linkPreviewOptions: false,
                             disableNotification: Vars.CurrentConf.DisableNotifications,
-                            messageThreadId: update.Message.MessageId).ConfigureAwait(false);
+                            replyParameters: update.Message.MessageId).ConfigureAwait(false);
             return true;
         }
     }

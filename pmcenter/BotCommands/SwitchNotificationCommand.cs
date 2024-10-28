@@ -20,9 +20,9 @@ namespace pmcenter.Commands
                     Vars.CurrentLang.Message_NotificationsOff :
                     Vars.CurrentLang.Message_NotificationsOn,
                 parseMode: ParseMode.Markdown,
-                            protectContent: false,
+                            linkPreviewOptions: false,
                             disableNotification: Vars.CurrentConf.DisableNotifications,
-                            messageThreadId: update.Message.MessageId).ConfigureAwait(false);
+                            replyParameters: update.Message.MessageId).ConfigureAwait(false);
 
             return true;
         }

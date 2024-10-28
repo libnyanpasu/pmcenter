@@ -30,9 +30,9 @@ namespace pmcenter
                                                                 .Replace("$2", update.Message.From.Id.ToString())
                                                                 .Replace("$1", "[" + update.Message.From.FirstName + " " + update.Message.From.LastName + "](tg://user?id=" + update.Message.From.Id + ")"),
                                                             parseMode: ParseMode.Markdown,
-            protectContent: false,
+            linkPreviewOptions: false,
             disableNotification: Vars.CurrentConf.DisableNotifications,
-            messageThreadId: update.Message.MessageId).ConfigureAwait(false);
+            replyParameters: update.Message.MessageId).ConfigureAwait(false);
                     }
                     if (update.Message.ForwardFrom != null && update.Message.ForwardFromChat == null)
                     {
@@ -47,7 +47,7 @@ namespace pmcenter
                                                                 parseMode: ParseMode.Markdown,
 
             disableNotification: Vars.CurrentConf.DisableNotifications,
-            messageThreadId:
+            replyParameters:
                                                                 forwardedMessageCc.MessageId).ConfigureAwait(false);
                         }
                     }
