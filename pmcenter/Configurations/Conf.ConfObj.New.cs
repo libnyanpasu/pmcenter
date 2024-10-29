@@ -25,6 +25,7 @@ namespace pmcenter
                 EnableRepliedConfirmation = true;
                 EnableForwardedConfirmation = false;
                 EnableAutoUpdateCheck = false;
+                EnableOwnerReplyCopyMessage = false;
                 UseUsernameInMsgInfo = true;
                 DonateString = "";
                 LowPerformanceMode = false;

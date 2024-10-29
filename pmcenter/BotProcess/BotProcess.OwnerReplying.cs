@@ -50,17 +50,29 @@ namespace pmcenter
             }
 
             // Is replying, replying to forwarded message AND not command.
-            var forwarded = await Vars.Bot.ForwardMessageAsync(
+            MessageId? replyToMsgId = null;
+            if (Vars.CurrentConf.EnableOwnerReplyCopyMessage)
+            {
+                replyToMsgId = await Vars.Bot.CopyMessageAsync(
+                    update.Message.ReplyToMessage.ForwardFrom.Id,
+                    update.Message.Chat.Id,
+                    update.Message.ReplyToMessage.MessageId,
+                    disableNotification: Vars.CurrentConf.DisableNotifications).ConfigureAwait(false);
+            }
+            else
+            {
+                replyToMsgId = (await Vars.Bot.ForwardMessageAsync(
                     update.Message.ReplyToMessage.ForwardFrom.Id,
                     update.Message.Chat.Id,
                     update.Message.MessageId,
-                    disableNotification: Vars.CurrentConf.DisableNotifications).ConfigureAwait(false);
+                    disableNotification: Vars.CurrentConf.DisableNotifications).ConfigureAwait(false)).MessageId;
+            }
             if (Vars.CurrentConf.EnableMsgLink)
             {
-                Log($"Recording message link: user {forwarded.MessageId} <-> owner {update.Message.MessageId}, user: {update.Message.ReplyToMessage.ForwardFrom.Id}", "BOT");
+                Log($"Recording message link: user {replyToMsgId} <-> owner {update.Message.MessageId}, user: {update.Message.ReplyToMessage.ForwardFrom.Id}", "BOT");
                 Vars.CurrentConf.MessageLinks.Add(
                     new Conf.MessageIDLink()
-                    { OwnerSessionMessageID = update.Message.MessageId, UserSessionMessageID = forwarded.MessageId, TGUser = update.Message.ReplyToMessage.ForwardFrom, IsFromOwner = true }
+                    { OwnerSessionMessageID = update.Message.MessageId, UserSessionMessageID = replyToMsgId, TGUser = update.Message.ReplyToMessage.ForwardFrom, IsFromOwner = true }
                 );
                 // Conf.SaveConf(false, true);
             }

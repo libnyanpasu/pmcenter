@@ -178,7 +178,7 @@ namespace pmcenter
                 {
                     Thread.Sleep(200);
                 }
-                
+
                 _ = await testBot.SendTextMessageAsync(receivedUid, Markdown.Escape($"👋 *Hello my owner!\n* Your UID `{receivedUid}` is now being saved."), parseMode: ParseMode.Markdown);
                 Say($"Hello, [{nickname}]! Your UID has been detected as {receivedUid}.");
                 SIn($".. Saving UID: {receivedUid}...");
