@@ -48,6 +48,7 @@ namespace pmcenter
         // public readonly static string AnonymousChannelTitle = "a user";
         // public readonly static string AnonymousChannelUsername = "HiddenSender";
 
+        public static bool EnableOwnerReplyCopyMessage = false;
         public static bool RestartRequired = false;
         public static bool NonEmergRestartRequired = false;
         public static bool UpdatePending = false;

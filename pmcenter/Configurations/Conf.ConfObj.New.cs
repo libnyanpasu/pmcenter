@@ -54,6 +54,7 @@ namespace pmcenter
                 BannedKeywords = new List<string>();
                 Banned = new List<BanObj>();
                 MessageLinks = new List<MessageIDLink>();
+                EnableOwnerReplyCopyMessage = false ;
             }
         }
     }

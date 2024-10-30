@@ -51,6 +51,7 @@ namespace pmcenter
             public List<string> BannedKeywords { get; set; }
             public List<BanObj> Banned { get; set; }
             public List<MessageIDLink> MessageLinks { get; set; }
+            public bool EnableOwnerReplyCopyMessage { get; set; }
         }
     }
 }
