@@ -56,7 +56,7 @@ namespace pmcenter
                 replyToMsgId = await Vars.Bot.CopyMessageAsync(
                     update.Message.ReplyToMessage.ForwardFrom.Id,
                     update.Message.Chat.Id,
-                    update.Message.ReplyToMessage.MessageId,
+                    update.Message.MessageId,
                     disableNotification: Vars.CurrentConf.DisableNotifications).ConfigureAwait(false);
             }
             else
