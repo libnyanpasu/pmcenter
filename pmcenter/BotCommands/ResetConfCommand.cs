@@ -20,11 +20,11 @@ namespace pmcenter.Commands
                     update.Message.From.Id,
                     Vars.CurrentLang.Message_ConfReset_Started,
                     parseMode: ParseMode.Markdown,
-                            linkPreviewOptions: false,
-                            disableNotification: Vars.CurrentConf.DisableNotifications,
-                            replyParameters: update.Message.MessageId).ConfigureAwait(false);
-                var ownerId = Vars.CurrentConf.OwnerUID;
-                var apiKey = Vars.CurrentConf.APIKey;
+                    linkPreviewOptions: false,
+                    disableNotification: Vars.CurrentConf.DisableNotifications,
+                    replyParameters: update.Message.MessageId).ConfigureAwait(false);
+                long ownerId = Vars.CurrentConf.OwnerUID;
+                string apiKey = Vars.CurrentConf.APIKey;
                 Vars.CurrentConf = new Conf.ConfObj
                 {
                     OwnerUID = ownerId,
@@ -37,25 +37,23 @@ namespace pmcenter.Commands
                     update.Message.From.Id,
                     Vars.CurrentLang.Message_ConfReset_Done,
                     parseMode: ParseMode.Markdown,
-            linkPreviewOptions: false,
-            disableNotification: Vars.CurrentConf.DisableNotifications,
-            replyParameters: update.Message.MessageId).ConfigureAwait(false);
+                    linkPreviewOptions: false,
+                    disableNotification: Vars.CurrentConf.DisableNotifications,
+                    replyParameters: update.Message.MessageId).ConfigureAwait(false);
                 await Methods.ExitApp(0);
                 return true;
             }
-            else
-            {
-                _ = await botClient.SendTextMessageAsync(
-                    update.Message.From.Id,
-                    Vars.CurrentLang.Message_ConfReset_Inited,
-                   parseMode: ParseMode.Markdown,
-            linkPreviewOptions: false,
-            disableNotification: Vars.CurrentConf.DisableNotifications,
-            replyParameters: update.Message.MessageId).ConfigureAwait(false);
-                Vars.ConfValidator = new Thread(() => Methods.ThrDoResetConfCount());
-                Vars.ConfValidator.Start();
-                return true;
-            }
+
+            _ = await botClient.SendTextMessageAsync(
+                update.Message.From.Id,
+                Vars.CurrentLang.Message_ConfReset_Inited,
+                parseMode: ParseMode.Markdown,
+                linkPreviewOptions: false,
+                disableNotification: Vars.CurrentConf.DisableNotifications,
+                replyParameters: update.Message.MessageId).ConfigureAwait(false);
+            Vars.ConfValidator = new Thread(() => Methods.ThrDoResetConfCount());
+            Vars.ConfValidator.Start();
+            return true;
         }
     }
 }

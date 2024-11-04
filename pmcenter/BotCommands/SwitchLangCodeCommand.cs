@@ -1,7 +1,7 @@
-using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
@@ -21,21 +21,24 @@ namespace pmcenter.Commands
             string listJsonString;
             Conf.LocaleList localeList;
             // try to get locale list
-            listJsonString = await GetStringAsync(new Uri(Vars.LocaleMapURL.Replace("$channel", Vars.CurrentConf.UpdateChannel))).ConfigureAwait(false);
+            listJsonString =
+                await GetStringAsync(new Uri(Vars.LocaleMapURL.Replace("$channel", Vars.CurrentConf.UpdateChannel)))
+                    .ConfigureAwait(false);
             localeList = JsonConvert.DeserializeObject<Conf.LocaleList>(listJsonString);
             if (!update.Message.Text.Contains(" "))
             {
-                var listString = "";
-                foreach (var mirror in localeList.Locales)
+                string listString = "";
+                foreach (Conf.LocaleMirror mirror in localeList.Locales)
                 {
                     listString += $"{mirror.LocaleCode} - {mirror.LocaleNameNative} ({mirror.LocaleNameEng})\n";
                 }
+
                 reply = Vars.CurrentLang.Message_AvailableLang.Replace("$1", listString);
             }
             else
             {
-                var targetCode = update.Message.Text.Split(" ")[1];
-                foreach (var mirror in localeList.Locales)
+                string targetCode = update.Message.Text.Split(" ")[1];
+                foreach (Conf.LocaleMirror mirror in localeList.Locales)
                 {
                     if (mirror.LocaleCode == targetCode)
                     {
@@ -57,16 +60,18 @@ namespace pmcenter.Commands
                         goto SendMsg;
                     }
                 }
+
                 throw new ArgumentException("Language not found.");
             }
-        SendMsg:
+
+            SendMsg:
             _ = await botClient.SendTextMessageAsync(
                 update.Message.From.Id,
                 reply,
                 parseMode: ParseMode.Markdown,
-                            linkPreviewOptions: false,
-                            disableNotification: Vars.CurrentConf.DisableNotifications,
-                            replyParameters: update.Message.MessageId).ConfigureAwait(false);
+                linkPreviewOptions: false,
+                disableNotification: Vars.CurrentConf.DisableNotifications,
+                replyParameters: update.Message.MessageId).ConfigureAwait(false);
             return true;
         }
     }

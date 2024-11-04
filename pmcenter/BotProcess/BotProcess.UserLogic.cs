@@ -1,5 +1,5 @@
-﻿using pmcenter.CallbackActions;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using pmcenter.CallbackActions;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
@@ -15,48 +15,60 @@ namespace pmcenter
         {
             // is user
 
-            if (await commandManager.Execute(Vars.Bot, update).ConfigureAwait(false)) return;
-
-            Log($"Received message from \"{update.Message.From.FirstName}\" (@{update.Message.From.Username} / {update.Message.From.Id}), forwarding...", "BOT");
-
-            if (Vars.CurrentConf.ForwardingPaused)
+            if (await commandManager.Execute(Vars.Bot, update).ConfigureAwait(false))
             {
-                Log("Stopped: forwarding is currently paused.", "BOT", LogLevel.Info);
-                _ = await Vars.Bot.SendTextMessageAsync(update.Message.From.Id,
-                                                    Vars.CurrentLang.Message_UserServicePaused,
-                                                    parseMode: ParseMode.Markdown,
-            linkPreviewOptions: false,
-            disableNotification: Vars.CurrentConf.DisableNotifications,
-            replyParameters: update.Message.MessageId).ConfigureAwait(false);
                 return;
             }
 
-            if (Methods.IsBanned(update.Message.From.Id))
+            Log(
+                $"Received message from \"{update.Message.From.FirstName}\" (@{update.Message.From.Username} / {update.Message.From.Id}), forwarding...",
+                "BOT");
+
+            if (Vars.CurrentConf.ForwardingPaused)
             {
-                Log($"Restricting banned user from sending messages: {update.Message.From.FirstName} (@{update.Message.From.Username} / {(long)update.Message.From.Id})", "BOT");
+                Log("Stopped: forwarding is currently paused.", "BOT");
+                _ = await Vars.Bot.SendTextMessageAsync(
+                    update.Message.From.Id,
+                    Vars.CurrentLang.Message_UserServicePaused,
+                    parseMode: ParseMode.Markdown,
+                    linkPreviewOptions: false,
+                    disableNotification: Vars.CurrentConf.DisableNotifications,
+                    replyParameters: update.Message.MessageId
+                ).ConfigureAwait(false);
+                return;
+            }
+
+            if (IsBanned(update.Message.From.Id))
+            {
+                Log(
+                    $"Restricting banned user from sending messages: {update.Message.From.FirstName} (@{update.Message.From.Username} / {update.Message.From.Id})",
+                    "BOT");
                 return;
             }
 
             // test text blacklist
             if (!string.IsNullOrEmpty(update.Message.Text) && IsKeywordBanned(update.Message.Text))
             {
-                Log("Stopped: sentence contains blocked words.", "BOT", LogLevel.Info);
+                Log("Stopped: sentence contains blocked words.", "BOT");
                 if (Vars.CurrentConf.KeywordAutoBan)
                 {
                     BanUser(update.Message.From.Id);
                 }
+
                 return;
             }
 
             // process owner
             Log("Forwarding message to owner...", "BOT");
-            var forwardedMessage = await Vars.Bot.ForwardMessageAsync(Vars.CurrentConf.OwnerUID,
-                                                                          update.Message.From.Id,
-                                                                          update.Message.MessageId,
-                                                                          disableNotification: Vars.CurrentConf.DisableNotifications).ConfigureAwait(false);
+            Message forwardedMessage = await Vars.Bot.ForwardMessageAsync(
+                Vars.CurrentConf.OwnerUID,
+                update.Message.From.Id,
+                update.Message.MessageId,
+                disableNotification: Vars.CurrentConf.DisableNotifications
+            ).ConfigureAwait(false);
             Vars.CurrentConf.Statistics.TotalForwardedToOwner += 1;
             // preprocess message link
-            var link = new Conf.MessageIDLink()
+            Conf.MessageIDLink link = new()
             {
                 OwnerSessionMessageID = forwardedMessage.MessageId,
                 UserSessionMessageID = update.Message.MessageId,
@@ -66,64 +78,101 @@ namespace pmcenter
             // process actions
             if (Vars.CurrentConf.EnableActions && Vars.CurrentConf.EnableMsgLink)
             {
-                var markup = new InlineKeyboardMarkup(CallbackProcess.GetAvailableButtons(update));
+                InlineKeyboardMarkup markup = new(CallbackProcess.GetAvailableButtons(update));
                 link.OwnerSessionActionMessageID = (await Vars.Bot.SendTextMessageAsync(
                     Vars.CurrentConf.OwnerUID,
                     Vars.CurrentLang.Message_Action_ChooseAction,
                     parseMode: ParseMode.Markdown,
-            linkPreviewOptions: false,
-            disableNotification: true,
-            replyParameters: forwardedMessage.MessageId,
+                    linkPreviewOptions: false,
+                    disableNotification: true,
+                    replyParameters: forwardedMessage.MessageId,
                     replyMarkup: markup
-                    ).ConfigureAwait(false)).MessageId;
+                ).ConfigureAwait(false)).MessageId;
             }
+
             // process message links
             if (Vars.CurrentConf.EnableMsgLink)
             {
-                Log($"Recording message link: owner {forwardedMessage.MessageId} <-> user {update.Message.MessageId} user: {update.Message.From.Id}", "BOT");
+                Log(
+                    $"Recording message link: owner {forwardedMessage.MessageId} <-> user {update.Message.MessageId} user: {update.Message.From.Id}",
+                    "BOT");
                 Vars.CurrentConf.MessageLinks.Add(link);
                 // Conf.SaveConf(false, true);
             }
+
             // check for real message sender
             // check if forwarded from channels
-            bool forwarderNotReal = false;
-            if (update.Message.ForwardFrom == null && update.Message.ForwardFromChat != null)
-                // is forwarded from channel
-                forwarderNotReal = true;
+            bool forwarderNotReal = update.Message.ForwardFrom == null && update.Message.ForwardFromChat != null;
 
             if (update.Message.ForwardFrom != null && update.Message.ForwardFromChat == null)
                 // is forwarded from chats, but the forwarder is not the message sender
+            {
                 if (update.Message.ForwardFrom.Id != update.Message.From.Id)
+                {
                     forwarderNotReal = true;
+                }
+            }
 
-            if (!string.IsNullOrEmpty(update.Message.ForwardSenderName) || !string.IsNullOrEmpty(forwardedMessage.ForwardSenderName))
+            if (!string.IsNullOrEmpty(update.Message.ForwardSenderName) ||
+                !string.IsNullOrEmpty(forwardedMessage.ForwardSenderName))
                 // is anonymously forwarded
+            {
                 forwarderNotReal = true;
+            }
 
             if (forwarderNotReal)
+            {
                 _ = await Vars.Bot.SendTextMessageAsync(Vars.CurrentConf.OwnerUID,
-                                                    Vars.CurrentLang.Message_ForwarderNotReal
-                                                        .Replace("$2", update.Message.From.Id.ToString())
-                                                        .Replace("$1", $"[{GetComposedUsername(update.Message.From)}](tg://user?id={update.Message.From.Id})"),
-                                                   parseMode: ParseMode.Markdown,
-            linkPreviewOptions: false,
-            disableNotification: Vars.CurrentConf.DisableNotifications,
-            replyParameters: forwardedMessage.MessageId).ConfigureAwait(false);
+                    Vars.CurrentLang.Message_ForwarderNotReal
+                        .Replace("$2", update.Message.From.Id.ToString())
+                        .Replace("$1",
+                            $"[{GetComposedUsername(update.Message.From)}](tg://user?id={update.Message.From.Id})"),
+                    parseMode: ParseMode.Markdown,
+                    linkPreviewOptions: false,
+                    disableNotification: Vars.CurrentConf.DisableNotifications,
+                    replyParameters: forwardedMessage.MessageId).ConfigureAwait(false);
+
+                // HACK: do a hack to allow cc to reply with target user
+                if (Vars.CurrentConf.EnableCc && Vars.CurrentConf.Cc.Contains(update.Message.From.Id) &&
+                    update.Message.ReplyToMessage != null && update.Message.ReplyToMessage.ForwardFrom != null)
+                {
+                    if (Vars.CurrentConf.EnableOwnerReplyCopyMessage)
+                    {
+                        _ = await Vars.Bot.CopyMessageAsync(
+                            update.Message.ReplyToMessage.ForwardFrom.Id,
+                            update.Message.From.Id,
+                            update.Message.MessageId,
+                            disableNotification: Vars.CurrentConf.DisableNotifications
+                        ).ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        _ = await Vars.Bot.ForwardMessageAsync(
+                            update.Message.ReplyToMessage.ForwardFrom.Id,
+                            update.Message.Chat.Id,
+                            update.Message.MessageId,
+                            disableNotification: Vars.CurrentConf.DisableNotifications
+                        ).ConfigureAwait(false);
+                    }
+                }
+            }
 
             // process cc
             if (Vars.CurrentConf.EnableCc)
             {
                 await RunCc(update).ConfigureAwait(false);
             }
+
             if (Vars.CurrentConf.EnableForwardedConfirmation)
             {
                 _ = await Vars.Bot.SendTextMessageAsync(update.Message.From.Id,
-                                                    Vars.CurrentLang.Message_ForwardedToOwner,
-                                                    parseMode: ParseMode.Markdown,
-            linkPreviewOptions: false,
-            disableNotification: false,
-            replyParameters: update.Message.MessageId).ConfigureAwait(false);
+                    Vars.CurrentLang.Message_ForwardedToOwner,
+                    parseMode: ParseMode.Markdown,
+                    linkPreviewOptions: false,
+                    disableNotification: false,
+                    replyParameters: update.Message.MessageId).ConfigureAwait(false);
             }
+
             AddRateLimit(update.Message.From.Id);
         }
     }

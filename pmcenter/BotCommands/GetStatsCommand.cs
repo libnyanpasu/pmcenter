@@ -15,14 +15,15 @@ namespace pmcenter.Commands
         {
             _ = await botClient.SendTextMessageAsync(
                 update.Message.From.Id,
-                Vars.CurrentLang.Message_Stats.Replace("$1", Vars.CurrentConf.Statistics.TotalMessagesReceived.ToString())
-                                              .Replace("$2", Vars.CurrentConf.Statistics.TotalForwardedToOwner.ToString())
-                                              .Replace("$3", Vars.CurrentConf.Statistics.TotalForwardedFromOwner.ToString())
-                                              .Replace("$4", Vars.CurrentConf.Statistics.TotalCommandsReceived.ToString()),
+                Vars.CurrentLang.Message_Stats
+                    .Replace("$1", Vars.CurrentConf.Statistics.TotalMessagesReceived.ToString())
+                    .Replace("$2", Vars.CurrentConf.Statistics.TotalForwardedToOwner.ToString())
+                    .Replace("$3", Vars.CurrentConf.Statistics.TotalForwardedFromOwner.ToString())
+                    .Replace("$4", Vars.CurrentConf.Statistics.TotalCommandsReceived.ToString()),
                 parseMode: ParseMode.Markdown,
-                            linkPreviewOptions: false,
-                            disableNotification: Vars.CurrentConf.DisableNotifications,
-                            replyParameters: update.Message.MessageId).ConfigureAwait(false);
+                linkPreviewOptions: false,
+                disableNotification: Vars.CurrentConf.DisableNotifications,
+                replyParameters: update.Message.MessageId).ConfigureAwait(false);
             return true;
         }
     }

@@ -4,10 +4,14 @@ namespace pmcenter
     {
         public static bool IsRateDataTracking(long uid)
         {
-            foreach (var data in Vars.RateLimits)
+            foreach (Conf.RateData data in Vars.RateLimits)
             {
-                if (data.UID == uid) return true;
+                if (data.UID == uid)
+                {
+                    return true;
+                }
             }
+
             return false;
         }
     }

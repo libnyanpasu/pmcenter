@@ -16,31 +16,36 @@ namespace pmcenter.Commands
 
         public async Task<bool> ExecuteAsync(TelegramBotClient botClient, Update update)
         {
-            var messageStr = Vars.CurrentLang.Message_SysStatus_Header + "\n\n";
+            string messageStr = Vars.CurrentLang.Message_SysStatus_Header + "\n\n";
             // process other headers
-            var noActionRequired = true;
+            bool noActionRequired = true;
             if (Vars.UpdatePending)
             {
-                messageStr += Vars.CurrentLang.Message_SysStatus_PendingUpdate.Replace("$1", Vars.UpdateVersion.ToString()) + "\n";
+                messageStr +=
+                    Vars.CurrentLang.Message_SysStatus_PendingUpdate.Replace("$1", Vars.UpdateVersion.ToString()) +
+                    "\n";
                 messageStr += GetUpdateLevel(Vars.UpdateLevel) + "\n";
                 noActionRequired = false;
             }
+
             if (Vars.NonEmergRestartRequired)
             {
                 messageStr += Vars.CurrentLang.Message_SysStatus_RestartRequired + "\n";
                 noActionRequired = false;
             }
+
             if (noActionRequired)
             {
                 messageStr += Vars.CurrentLang.Message_SysStatus_NoOperationRequired + "\n";
             }
+
             messageStr += "\n";
             // process summary
             messageStr += Vars.CurrentLang.Message_SysStatus_Summary
                 .Replace("$1", Environment.MachineName)
                 .Replace("$2", Environment.OSVersion.ToString())
                 .Replace("$3", RuntimeInformation.OSDescription)
-                .Replace("$4", (new TimeSpan(0, 0, 0, 0, Environment.TickCount)).ToString())
+                .Replace("$4", new TimeSpan(0, 0, 0, 0, Environment.TickCount).ToString())
                 .Replace("$5", Vars.StartSW.Elapsed.ToString())
                 .Replace("$6", $"{DateTime.UtcNow.ToShortDateString()} / {DateTime.UtcNow.ToShortTimeString()}")
                 .Replace("$7", Environment.Version.ToString())
@@ -58,9 +63,9 @@ namespace pmcenter.Commands
                 update.Message.From.Id,
                 messageStr,
                 parseMode: ParseMode.Markdown,
-                            linkPreviewOptions: false,
-                            disableNotification: Vars.CurrentConf.DisableNotifications,
-                            replyParameters: update.Message.MessageId).ConfigureAwait(false);
+                linkPreviewOptions: false,
+                disableNotification: Vars.CurrentConf.DisableNotifications,
+                replyParameters: update.Message.MessageId).ConfigureAwait(false);
             return true;
         }
     }

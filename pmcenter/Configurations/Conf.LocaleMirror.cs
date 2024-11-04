@@ -11,6 +11,7 @@ namespace pmcenter
                 LocaleNameEng = "";
                 LocaleNameNative = "";
             }
+
             public string LocaleFileURL { get; set; }
             public string LocaleCode { get; set; }
             public string LocaleNameEng { get; set; }

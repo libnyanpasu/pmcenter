@@ -9,7 +9,7 @@ namespace pmcenter
                 Optional = 0,
                 Recommended = 1,
                 Important = 2,
-                Urgent = 3,
+                Urgent = 3
             }
         }
     }

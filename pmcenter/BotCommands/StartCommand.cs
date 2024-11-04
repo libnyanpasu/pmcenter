@@ -19,9 +19,9 @@ namespace pmcenter.Commands
                     update.Message.From.Id,
                     Vars.CurrentLang.Message_OwnerStart,
                     parseMode: ParseMode.Markdown,
-                            linkPreviewOptions: false,
-                            disableNotification: Vars.CurrentConf.DisableNotifications,
-                            replyParameters: update.Message.MessageId).ConfigureAwait(false);
+                    linkPreviewOptions: false,
+                    disableNotification: Vars.CurrentConf.DisableNotifications,
+                    replyParameters: update.Message.MessageId).ConfigureAwait(false);
             }
             else
             {
@@ -29,10 +29,11 @@ namespace pmcenter.Commands
                     update.Message.From.Id,
                     Vars.CurrentLang.Message_UserStartDefault,
                     parseMode: ParseMode.Markdown,
-            linkPreviewOptions: false,
-            disableNotification: Vars.CurrentConf.DisableNotifications,
-            replyParameters: update.Message.MessageId).ConfigureAwait(false);
+                    linkPreviewOptions: false,
+                    disableNotification: Vars.CurrentConf.DisableNotifications,
+                    replyParameters: update.Message.MessageId).ConfigureAwait(false);
             }
+
             return true;
         }
     }

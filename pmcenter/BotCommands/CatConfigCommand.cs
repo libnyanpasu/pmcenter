@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
@@ -14,40 +15,39 @@ namespace pmcenter.Commands
 
         public async Task<bool> ExecuteAsync(TelegramBotClient botClient, Update update)
         {
-            var text = SerializeCurrentConf();
-            var texts = StrChunk(text, 1024);
+            string text = SerializeCurrentConf();
+            List<string> texts = StrChunk(text, 1024);
             if (texts.Count == 1)
             {
                 _ = await botClient.SendTextMessageAsync(
                     update.Message.From.Id,
                     Vars.CurrentLang.Message_CurrentConf.Replace("$1", text),
                     parseMode: ParseMode.Markdown,
-                            linkPreviewOptions: false,
-                            disableNotification: Vars.CurrentConf.DisableNotifications,
-                            replyParameters: update.Message.MessageId).ConfigureAwait(false);
+                    linkPreviewOptions: false,
+                    disableNotification: Vars.CurrentConf.DisableNotifications,
+                    replyParameters: update.Message.MessageId).ConfigureAwait(false);
                 return true;
             }
-            else
+
+            _ = await botClient.SendTextMessageAsync(
+                update.Message.From.Id,
+                Vars.CurrentLang.Message_CurrentConf.Replace("$1", texts[0]),
+                parseMode: ParseMode.Markdown,
+                linkPreviewOptions: false,
+                disableNotification: Vars.CurrentConf.DisableNotifications,
+                replyParameters: update.Message.MessageId).ConfigureAwait(false);
+            for (int i = 1; i < texts.Count; i++)
             {
                 _ = await botClient.SendTextMessageAsync(
                     update.Message.From.Id,
-                    Vars.CurrentLang.Message_CurrentConf.Replace("$1", texts[0]),
-                   parseMode: ParseMode.Markdown,
-            linkPreviewOptions: false,
-            disableNotification: Vars.CurrentConf.DisableNotifications,
-            replyParameters: update.Message.MessageId).ConfigureAwait(false);
-                for (int i = 1; i < texts.Count; i++)
-                {
-                    _ = await botClient.SendTextMessageAsync(
-                        update.Message.From.Id,
-                        ($"`{texts[i]}`"),
-                        parseMode: ParseMode.Markdown,
-            linkPreviewOptions: false,
-            disableNotification: Vars.CurrentConf.DisableNotifications,
-            replyParameters: update.Message.MessageId).ConfigureAwait(false);
-                }
-                return true;
+                    $"`{texts[i]}`",
+                    parseMode: ParseMode.Markdown,
+                    linkPreviewOptions: false,
+                    disableNotification: Vars.CurrentConf.DisableNotifications,
+                    replyParameters: update.Message.MessageId).ConfigureAwait(false);
             }
+
+            return true;
         }
     }
 }

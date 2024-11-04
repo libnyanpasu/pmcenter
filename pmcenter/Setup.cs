@@ -12,17 +12,19 @@ using Telegram.Bot.Extensions;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using File = System.IO.File;
 
 namespace pmcenter
 {
     public static class Setup
     {
-        private static readonly Conf.ConfObj newConf = new Conf.ConfObj();
+        private static readonly Conf.ConfObj newConf = new();
         private static TelegramBotClient testBot;
         private static CancellationTokenSource botCancelSource;
-        private static bool isUidReceived = false;
+        private static bool isUidReceived;
         private static long receivedUid = -1;
         private static string nickname = "";
+
         private static async Task OnUpdate(Update update)
         {
             Say("Update received.");
@@ -31,7 +33,9 @@ namespace pmcenter
             {
                 isUidReceived = true;
                 receivedUid = update.Message.From.Id;
-                nickname = string.IsNullOrEmpty(update.Message.From.LastName) ? update.Message.From.FirstName : $"{update.Message.From.FirstName} {update.Message.From.LastName}";
+                nickname = string.IsNullOrEmpty(update.Message.From.LastName)
+                    ? update.Message.From.FirstName
+                    : $"{update.Message.From.FirstName} {update.Message.From.LastName}";
                 testBot.OnUpdate -= OnUpdate;
                 testBot.OnError -= OnError;
             }
@@ -46,10 +50,12 @@ namespace pmcenter
         {
             Console.WriteLine(input);
         }
+
         private static void SIn(string input)
         {
             Console.Write(input);
         }
+
         public static async Task SetupWizard()
         {
             Say(":) Welcome!");
@@ -79,37 +85,41 @@ namespace pmcenter
             Say("   All major configurations have been set!");
             Say("");
             SIn("=> Save configurations? [Y/n]: ");
-            var choice = Console.ReadLine();
+            string choice = Console.ReadLine();
             if (choice.ToLower() != "n")
             {
-                if (System.IO.File.Exists(Vars.ConfFile))
+                if (File.Exists(Vars.ConfFile))
                 {
                     Say("Warning: pmcenter.json already exists.");
                     SIn("..       Moving the existing one to pmcenter.json.bak...");
-                    if (System.IO.File.Exists($"{Vars.ConfFile}.bak"))
+                    if (File.Exists($"{Vars.ConfFile}.bak"))
                     {
                         SIn(" File exists, deleting...");
-                        System.IO.File.Delete($"{Vars.ConfFile}.bak");
+                        File.Delete($"{Vars.ConfFile}.bak");
                     }
-                    System.IO.File.Move(Vars.ConfFile, $"{Vars.ConfFile}.bak");
+
+                    File.Move(Vars.ConfFile, $"{Vars.ConfFile}.bak");
                     Say(" Done!");
                 }
+
                 SIn($"Saving configurations to {Vars.ConfFile}...");
                 Vars.CurrentConf = newConf;
                 _ = await Conf.SaveConf().ConfigureAwait(false);
                 Say(" Done!");
-                if (System.IO.File.Exists(Vars.LangFile))
+                if (File.Exists(Vars.LangFile))
                 {
                     Say("Warning: pmcenter_locale.json already exists.");
                     SIn("..       Moving the existing one to pmcenter_locale.json.bak...");
-                    if (System.IO.File.Exists($"{Vars.LangFile}.bak"))
+                    if (File.Exists($"{Vars.LangFile}.bak"))
                     {
                         SIn(" File exists, deleting...");
-                        System.IO.File.Delete($"{Vars.LangFile}.bak");
+                        File.Delete($"{Vars.LangFile}.bak");
                     }
-                    System.IO.File.Move(Vars.LangFile, $"{Vars.LangFile}.bak");
+
+                    File.Move(Vars.LangFile, $"{Vars.LangFile}.bak");
                     Say(" Done!");
                 }
+
                 SIn($"Saving language file to {Vars.LangFile}...");
                 Vars.CurrentLang = new Lang.Language();
                 _ = await Lang.SaveLang().ConfigureAwait(false);
@@ -129,15 +139,17 @@ namespace pmcenter
             {
                 Say("OK. Come back later!");
             }
+
             Environment.Exit(0);
         }
+
         private static async Task SetAPIKey()
         {
             Say("1> API Key");
             Say("   API Key is necessary for any Telegram bot to contact with Telegram servers.");
             Say("   You can always get one for free at @BotFather");
             Say("");
-        EnterKey:
+            EnterKey:
             SIn("=> Enter your API Key: ");
             string key = Console.ReadLine();
             SIn($".. Testing API Key: {key}...");
@@ -147,7 +159,7 @@ namespace pmcenter
                 testBot = new TelegramBotClient(key, cancellationToken: botCancelSource.Token);
                 if (!await testBot.TestApiAsync().ConfigureAwait(false))
                 {
-                    throw (new ArgumentException("API Key is not valid."));
+                    throw new ArgumentException("API Key is not valid.");
                 }
             }
             catch (Exception ex)
@@ -156,16 +168,18 @@ namespace pmcenter
                 Say($" Invalid API Key: {ex.Message}");
                 goto EnterKey;
             }
+
             newConf.APIKey = key;
             Say(" Done!");
         }
+
         private static async Task SetUID()
         {
             Say("2> Owner ID");
             Say("   Your Telegram UID is your unique and permanent identifier.");
             Say("   It is required to enable your pmcenter instance to contact with you.");
             Say("");
-        EnterUID:
+            EnterUID:
             SIn("=> Enter your UID, or \"auto\" for automatic setup: ");
             string uid = Console.ReadLine();
             if (uid.ToLower() == "auto")
@@ -179,7 +193,9 @@ namespace pmcenter
                     Thread.Sleep(200);
                 }
 
-                _ = await testBot.SendTextMessageAsync(receivedUid, Markdown.Escape($"👋 *Hello my owner!\n* Your UID `{receivedUid}` is now being saved."), parseMode: ParseMode.Markdown);
+                _ = await testBot.SendTextMessageAsync(receivedUid,
+                    Markdown.Escape($"👋 *Hello my owner!\n* Your UID `{receivedUid}` is now being saved."),
+                    parseMode: ParseMode.Markdown);
                 Say($"Hello, [{nickname}]! Your UID has been detected as {receivedUid}.");
                 SIn($".. Saving UID: {receivedUid}...");
                 newConf.OwnerUID = receivedUid;
@@ -201,6 +217,7 @@ namespace pmcenter
                 }
             }
         }
+
         private static void SetNotifPrefs()
         {
             Say("3> Notification preferences");
@@ -212,6 +229,7 @@ namespace pmcenter
             newConf.DisableNotifications = muteNotif.ToLower() != "y" ? true : false;
             Say(" Done!");
         }
+
         private static void SetAutoBanPrefs()
         {
             Say("4> Anti-flood preferences");
@@ -223,6 +241,7 @@ namespace pmcenter
             newConf.AutoBan = autoBan.ToLower() != "n" ? true : false;
             Say(" Done!");
         }
+
         private static void SetMessageLinks()
         {
             Say("4> Message links preferences");

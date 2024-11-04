@@ -12,8 +12,8 @@ namespace pmcenter
         public static partial class UpdateHelper
         {
             /// <summary>
-            /// Download update to filesystem and extract.
-            /// You must run Conf.CheckForUpdatesAsync() in order to pass the latestUpdate argument.
+            ///     Download update to filesystem and extract.
+            ///     You must run Conf.CheckForUpdatesAsync() in order to pass the latestUpdate argument.
             /// </summary>
             /// <param name="latestUpdate">The information of the latest update</param>
             /// <param name="localizationIndex">The target localization's index</param>
@@ -29,14 +29,15 @@ namespace pmcenter
                     Path.Combine(Vars.AppDirectory, "pmcenter_update.zip")
                 ).ConfigureAwait(false);
                 Log("Download complete. Extracting...");
-                using (var zip = ZipFile.OpenRead(Path.Combine(Vars.AppDirectory, "pmcenter_update.zip")))
+                using (ZipArchive zip = ZipFile.OpenRead(Path.Combine(Vars.AppDirectory, "pmcenter_update.zip")))
                 {
-                    foreach (var entry in zip.Entries)
+                    foreach (ZipArchiveEntry entry in zip.Entries)
                     {
                         Log($"Extracting: {Path.Combine(Vars.AppDirectory, entry.FullName)}");
                         entry.ExtractToFile(Path.Combine(Vars.AppDirectory, entry.FullName), true);
                     }
                 }
+
                 Log("Cleaning up temporary files...");
                 File.Delete(Path.Combine(Vars.AppDirectory, "pmcenter_update.zip"));
             }

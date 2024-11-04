@@ -10,7 +10,7 @@ namespace pmcenter
                 ThreadStatus.Standby => Vars.CurrentLang.Message_ThreadStatus_Standby,
                 ThreadStatus.Stopped => Vars.CurrentLang.Message_ThreadStatus_Stopped,
                 ThreadStatus.Error => Vars.CurrentLang.Message_ThreadStatus_Error,
-                _ => Vars.CurrentLang.Message_ThreadStatus_Unknown,
+                _ => Vars.CurrentLang.Message_ThreadStatus_Unknown
             };
         }
     }

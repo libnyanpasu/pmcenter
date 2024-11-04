@@ -22,12 +22,12 @@ namespace pmcenter.Commands
                 update.Message.From.Id,
                 Vars.CurrentLang.Message_SwitchingLang,
                 parseMode: ParseMode.Markdown,
-                            linkPreviewOptions: false,
-                            disableNotification: Vars.CurrentConf.DisableNotifications,
-                            replyParameters: update.Message.MessageId).ConfigureAwait(false);
+                linkPreviewOptions: false,
+                disableNotification: Vars.CurrentConf.DisableNotifications,
+                replyParameters: update.Message.MessageId).ConfigureAwait(false);
 
             // download file
-            var langUrl = update.Message.Text.Split(" ")[1];
+            string langUrl = update.Message.Text.Split(" ")[1];
             Vars.CurrentConf.LangURL = langUrl;
             // save conf
             _ = await Conf.SaveConf(isAutoSave: true);
@@ -45,9 +45,9 @@ namespace pmcenter.Commands
                 update.Message.From.Id,
                 Vars.CurrentLang.Message_LangSwitched,
                 parseMode: ParseMode.Markdown,
-            linkPreviewOptions: false,
-            disableNotification: Vars.CurrentConf.DisableNotifications,
-            replyParameters: update.Message.MessageId).ConfigureAwait(false);
+                linkPreviewOptions: false,
+                disableNotification: Vars.CurrentConf.DisableNotifications,
+                replyParameters: update.Message.MessageId).ConfigureAwait(false);
 
             return true;
         }

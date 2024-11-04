@@ -5,22 +5,23 @@
 */
 
 using System.Threading.Tasks;
+using pmcenter.CommandLines;
 
 namespace pmcenter
 {
     public static class CmdLineProcess
     {
-        private static readonly CommandLineRouter cmdLineRouter = new CommandLineRouter();
+        private static readonly CommandLineRouter cmdLineRouter = new();
 
         static CmdLineProcess()
         {
-            cmdLineRouter.RegisterCommand(new CommandLines.HelpCmdLine());
-            cmdLineRouter.RegisterCommand(new CommandLines.InfoCmdLine());
-            cmdLineRouter.RegisterCommand(new CommandLines.NonServiceModeCmdLine());
-            cmdLineRouter.RegisterCommand(new CommandLines.SetupWizardCmdLine());
-            cmdLineRouter.RegisterCommand(new CommandLines.ResetCmdLine());
-            cmdLineRouter.RegisterCommand(new CommandLines.BackupCmdLine());
-            cmdLineRouter.RegisterCommand(new CommandLines.UpdateCmdLine());
+            cmdLineRouter.RegisterCommand(new HelpCmdLine());
+            cmdLineRouter.RegisterCommand(new InfoCmdLine());
+            cmdLineRouter.RegisterCommand(new NonServiceModeCmdLine());
+            cmdLineRouter.RegisterCommand(new SetupWizardCmdLine());
+            cmdLineRouter.RegisterCommand(new ResetCmdLine());
+            cmdLineRouter.RegisterCommand(new BackupCmdLine());
+            cmdLineRouter.RegisterCommand(new UpdateCmdLine());
         }
 
         public static async Task RunCommand(string CommandLine)

@@ -8,9 +8,20 @@ namespace pmcenter
     {
         private static async Task MessageRoute(Update update)
         {
-            if (update.Message == null) return;
-            if (update.Message.From.IsBot) return;
-            if (update.Message.Chat.Type != ChatType.Private) return;
+            if (update.Message == null)
+            {
+                return;
+            }
+
+            if (update.Message.From.IsBot)
+            {
+                return;
+            }
+
+            if (update.Message.Chat.Type != ChatType.Private)
+            {
+                return;
+            }
 
             Vars.CurrentConf.Statistics.TotalMessagesReceived += 1;
             if (update.Message.From.Id == Vars.CurrentConf.OwnerUID)

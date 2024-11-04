@@ -8,6 +8,7 @@ namespace pmcenter
             {
                 UID = -1;
             }
+
             public long UID { get; set; }
         }
     }

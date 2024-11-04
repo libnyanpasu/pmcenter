@@ -18,9 +18,9 @@ namespace pmcenter.Commands
                 update.Message.From.Id,
                 Vars.CurrentLang.Message_Restarting,
                 parseMode: ParseMode.Markdown,
-                            linkPreviewOptions: false,
-                            disableNotification: Vars.CurrentConf.DisableNotifications,
-                            replyParameters: update.Message.MessageId).ConfigureAwait(false);
+                linkPreviewOptions: false,
+                disableNotification: Vars.CurrentConf.DisableNotifications,
+                replyParameters: update.Message.MessageId).ConfigureAwait(false);
             Thread.Sleep(5000);
             await Methods.ExitApp(0);
             return true;

@@ -34,8 +34,9 @@ namespace pmcenter.Commands
                     // no argument detected / use reply message instead
                     if (update.Message.ReplyToMessage.ForwardFrom == null)
                     {
-                        throw (new ArgumentException("Cannot initiate Continued Conversation by channel posts."));
+                        throw new ArgumentException("Cannot initiate Continued Conversation by channel posts.");
                     }
+
                     realTarget = update.Message.ReplyToMessage.ForwardFrom.Id;
                 }
 
@@ -50,15 +51,16 @@ namespace pmcenter.Commands
                 }
                 else
                 {
-                    replacementText = $"[{update.Message.ReplyToMessage.ForwardFrom.FirstName} (@{update.Message.ReplyToMessage.ForwardFrom.Username})](tg://user?id={realTarget})";
+                    replacementText =
+                        $"[{update.Message.ReplyToMessage.ForwardFrom.FirstName} (@{update.Message.ReplyToMessage.ForwardFrom.Username})](tg://user?id={realTarget})";
                 }
 
                 _ = await botClient.SendTextMessageAsync(update.Message.From.Id,
-                                                    Vars.CurrentLang.Message_ContinuedChatEnabled.Replace("$1", replacementText),
-                                                    parseMode: ParseMode.Markdown,
-                            linkPreviewOptions: false,
-                            disableNotification: Vars.CurrentConf.DisableNotifications,
-                            replyParameters: update.Message.MessageId).ConfigureAwait(false);
+                    Vars.CurrentLang.Message_ContinuedChatEnabled.Replace("$1", replacementText),
+                    parseMode: ParseMode.Markdown,
+                    linkPreviewOptions: false,
+                    disableNotification: Vars.CurrentConf.DisableNotifications,
+                    replyParameters: update.Message.MessageId).ConfigureAwait(false);
                 return true;
             }
             catch (Exception ex)
@@ -67,9 +69,9 @@ namespace pmcenter.Commands
                 _ = await botClient.SendTextMessageAsync(update.Message.From.Id,
                     Vars.CurrentLang.Message_GeneralFailure.Replace("$1", ex.ToString()),
                     parseMode: ParseMode.Markdown,
-            linkPreviewOptions: false,
-            disableNotification: Vars.CurrentConf.DisableNotifications,
-            replyParameters: update.Message.MessageId).ConfigureAwait(false);
+                    linkPreviewOptions: false,
+                    disableNotification: Vars.CurrentConf.DisableNotifications,
+                    replyParameters: update.Message.MessageId).ConfigureAwait(false);
                 return true;
             }
         }

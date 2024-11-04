@@ -17,13 +17,14 @@ namespace pmcenter.Commands
             {
                 return false;
             }
+
             _ = await botClient.SendTextMessageAsync(
                 update.Message.From.Id,
                 Vars.CurrentConf.DonateString,
                 parseMode: ParseMode.Markdown,
-                            linkPreviewOptions: false,
-                            disableNotification: Vars.CurrentConf.DisableNotifications,
-                            replyParameters: update.Message.MessageId).ConfigureAwait(false);
+                linkPreviewOptions: false,
+                disableNotification: Vars.CurrentConf.DisableNotifications,
+                replyParameters: update.Message.MessageId).ConfigureAwait(false);
             return true;
         }
     }

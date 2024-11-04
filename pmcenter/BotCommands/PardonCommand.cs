@@ -25,9 +25,9 @@ namespace pmcenter.Commands
                 update.Message.From.Id,
                 Vars.CurrentLang.Message_UserPardoned,
                 parseMode: ParseMode.Markdown,
-                            linkPreviewOptions: false,
-                            disableNotification: Vars.CurrentConf.DisableNotifications,
-                            replyParameters: update.Message.MessageId).ConfigureAwait(false);
+                linkPreviewOptions: false,
+                disableNotification: Vars.CurrentConf.DisableNotifications,
+                replyParameters: update.Message.MessageId).ConfigureAwait(false);
             return true;
         }
     }

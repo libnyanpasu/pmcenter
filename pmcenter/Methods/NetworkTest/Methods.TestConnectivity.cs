@@ -17,13 +17,14 @@ namespace pmcenter
                     Timeout = TimeSpan.FromMilliseconds(10000)
                 };
                 client.DefaultRequestVersion = new Version(2, 0);
-                var response = await client.GetAsync(target).ConfigureAwait(false);
+                HttpResponseMessage response = await client.GetAsync(target).ConfigureAwait(false);
                 response.EnsureSuccessStatusCode();
                 return true;
             }
-            catch (HttpRequestException ex) when (ex.StatusCode is HttpStatusCode.BadRequest or HttpStatusCode.Forbidden && ignore45)
+            catch (HttpRequestException ex) when
+                (ex.StatusCode is HttpStatusCode.BadRequest or HttpStatusCode.Forbidden && ignore45)
             {
-                // ºöÂÔ 4xx ºÍ 5xx µÄÏìÓ¦´íÎó£¬¸ù¾Ý ignore45 ·µ»Ø true
+                // ï¿½ï¿½ï¿½ï¿½ 4xx ï¿½ï¿½ 5xx ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ó£¬¸ï¿½ï¿½ï¿½ ignore45 ï¿½ï¿½ï¿½ï¿½ true
                 return true;
             }
             catch (WebException ex)

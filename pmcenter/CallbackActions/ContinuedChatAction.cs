@@ -22,6 +22,9 @@ namespace pmcenter.CallbackActions
             return Vars.CurrentLang.Message_Action_ContChatEnabled.Replace("$1", GetComposedUsername(user, false));
         }
 
-        public bool IsAvailable(Update update) => Vars.CurrentConf.ContChatTarget == -1;
+        public bool IsAvailable(Update update)
+        {
+            return Vars.CurrentConf.ContChatTarget == -1;
+        }
     }
 }

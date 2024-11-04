@@ -11,13 +11,15 @@ namespace pmcenter
         {
             Log("Checking configurations file's integrity...", "CONF");
             if (!File.Exists(Vars.ConfFile))
-            { // STEP 1, DETECT EXISTENCE.
+            {
+                // STEP 1, DETECT EXISTENCE.
                 Log("Configurations file not found. Creating...", "CONF", LogLevel.Warning);
                 Vars.CurrentConf = new ConfObj();
                 _ = await SaveConf(true).ConfigureAwait(false); // Then the app will exit, do nothing.
             }
             else
-            { // STEP 2, READ TEST.
+            {
+                // STEP 2, READ TEST.
                 try
                 {
                     _ = await ReadConf(false).ConfigureAwait(false); // Read but don't apply.
@@ -31,6 +33,7 @@ namespace pmcenter
                     _ = await SaveConf(true).ConfigureAwait(false); // Then the app will exit, do nothing.
                 }
             }
+
             Log("Integrity test finished!", "CONF");
         }
     }

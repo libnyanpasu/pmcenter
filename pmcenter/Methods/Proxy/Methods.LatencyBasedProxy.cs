@@ -39,22 +39,25 @@ namespace pmcenter
             }
 
             // 判断代理是否被绕过（此处直接返回 false，表示所有请求都走代理）
-            public bool IsBypassed(Uri host) => false;
+            public bool IsBypassed(Uri host)
+            {
+                return false;
+            }
 
             private async Task<WebProxy> GetFastestProxyAsync()
             {
                 WebProxy fastestProxy = null;
                 long lowestLatency = long.MaxValue;
 
-                foreach (var proxy in _proxies)
+                foreach (WebProxy proxy in _proxies)
                 {
-                    var stopwatch = Stopwatch.StartNew();
+                    Stopwatch stopwatch = Stopwatch.StartNew();
                     try
                     {
-                        var handler = new HttpClientHandler { Proxy = proxy };
-                        using (var client = new HttpClient(handler))
+                        HttpClientHandler handler = new HttpClientHandler { Proxy = proxy };
+                        using (HttpClient client = new HttpClient(handler))
                         {
-                            var response = await client.GetAsync(_testUrl);
+                            HttpResponseMessage response = await client.GetAsync(_testUrl);
                             stopwatch.Stop();
 
                             if (response.IsSuccessStatusCode && stopwatch.ElapsedMilliseconds < lowestLatency)
@@ -74,7 +77,7 @@ namespace pmcenter
                 {
                     throw new Exception(
                         "No proxy is available. Please check your proxy list and network connectivity."
-                        );
+                    );
                 }
 
                 return fastestProxy;

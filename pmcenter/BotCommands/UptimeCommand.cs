@@ -14,17 +14,17 @@ namespace pmcenter.Commands
 
         public async Task<bool> ExecuteAsync(TelegramBotClient botClient, Update update)
         {
-            var uptimeString =
+            string uptimeString =
                 Vars.CurrentLang.Message_UptimeInfo
-                .Replace("$1", (new TimeSpan(0, 0, 0, 0, Environment.TickCount)).ToString())
-                .Replace("$2", Vars.StartSW.Elapsed.ToString());
+                    .Replace("$1", new TimeSpan(0, 0, 0, 0, Environment.TickCount).ToString())
+                    .Replace("$2", Vars.StartSW.Elapsed.ToString());
             _ = await botClient.SendTextMessageAsync(
                 update.Message.From.Id,
                 uptimeString,
                 parseMode: ParseMode.Markdown,
-                            linkPreviewOptions: false,
-                            disableNotification: Vars.CurrentConf.DisableNotifications,
-                            replyParameters: update.Message.MessageId).ConfigureAwait(false);
+                linkPreviewOptions: false,
+                disableNotification: Vars.CurrentConf.DisableNotifications,
+                replyParameters: update.Message.MessageId).ConfigureAwait(false);
             return true;
         }
     }

@@ -23,9 +23,9 @@ namespace pmcenter.Commands
                     update.Message.From.Id,
                     Vars.CurrentLang.Message_UserBanned,
                     parseMode: ParseMode.Markdown,
-                            linkPreviewOptions: false,
-                            disableNotification: Vars.CurrentConf.DisableNotifications,
-                            replyParameters: update.Message.MessageId).ConfigureAwait(false);
+                    linkPreviewOptions: false,
+                    disableNotification: Vars.CurrentConf.DisableNotifications,
+                    replyParameters: update.Message.MessageId).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -33,10 +33,11 @@ namespace pmcenter.Commands
                     update.Message.From.Id,
                     Vars.CurrentLang.Message_GeneralFailure.Replace("$1", ex.Message),
                     parseMode: ParseMode.Markdown,
-                            linkPreviewOptions: false,
-                            disableNotification: Vars.CurrentConf.DisableNotifications,
-                            replyParameters: update.Message.MessageId).ConfigureAwait(false);
+                    linkPreviewOptions: false,
+                    disableNotification: Vars.CurrentConf.DisableNotifications,
+                    replyParameters: update.Message.MessageId).ConfigureAwait(false);
             }
+
             return true;
         }
     }

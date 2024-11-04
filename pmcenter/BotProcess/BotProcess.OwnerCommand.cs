@@ -17,34 +17,45 @@ namespace pmcenter
                 Vars.CurrentConf.Statistics.TotalCommandsReceived += 1;
                 return;
             }
+
             // command mismatch
             if (Vars.CurrentConf.ContChatTarget != -1)
             {
                 // Is replying, replying to forwarded message AND not command.
-                var forwarded = await Vars.Bot.ForwardMessageAsync(
-                                                                       Vars.CurrentConf.ContChatTarget,
-                                                                       update.Message.Chat.Id,
-                                                                       update.Message.MessageId,
-                                                                       disableNotification: Vars.CurrentConf.DisableNotifications).ConfigureAwait(false);
+                Message forwarded = await Vars.Bot.ForwardMessageAsync(
+                    Vars.CurrentConf.ContChatTarget,
+                    update.Message.Chat.Id,
+                    update.Message.MessageId,
+                    disableNotification: Vars.CurrentConf.DisableNotifications).ConfigureAwait(false);
                 if (Vars.CurrentConf.EnableMsgLink)
                 {
-                    Log($"Recording message link: {forwarded.MessageId} -> {update.Message.MessageId} in {update.Message.From.Id}", "BOT");
+                    Log(
+                        $"Recording message link: {forwarded.MessageId} -> {update.Message.MessageId} in {update.Message.From.Id}",
+                        "BOT");
                     Vars.CurrentConf.MessageLinks.Add(
-                        new Conf.MessageIDLink()
-                        { OwnerSessionMessageID = forwarded.MessageId, UserSessionMessageID = update.Message.MessageId, TGUser = update.Message.From, IsFromOwner = true }
+                        new Conf.MessageIDLink
+                        {
+                            OwnerSessionMessageID = forwarded.MessageId,
+                            UserSessionMessageID = update.Message.MessageId, TGUser = update.Message.From,
+                            IsFromOwner = true
+                        }
                     );
                     // Conf.SaveConf(false, true);
                 }
+
                 // Process locale.
                 if (Vars.CurrentConf.EnableRepliedConfirmation)
                 {
-                    var replyToMessage = Vars.CurrentLang.Message_ReplySuccessful;
-                    replyToMessage = replyToMessage.Replace("$1", $"[{Vars.CurrentConf.ContChatTarget}](tg://user?id={Vars.CurrentConf.ContChatTarget})");
-                    _ = await Vars.Bot.SendTextMessageAsync(update.Message.From.Id, replyToMessage, parseMode: ParseMode.Markdown,
-            linkPreviewOptions: false,
-            disableNotification: Vars.CurrentConf.DisableNotifications,
-            replyParameters: update.Message.MessageId).ConfigureAwait(false);
+                    string replyToMessage = Vars.CurrentLang.Message_ReplySuccessful;
+                    replyToMessage = replyToMessage.Replace("$1",
+                        $"[{Vars.CurrentConf.ContChatTarget}](tg://user?id={Vars.CurrentConf.ContChatTarget})");
+                    _ = await Vars.Bot.SendTextMessageAsync(update.Message.From.Id, replyToMessage,
+                        parseMode: ParseMode.Markdown,
+                        linkPreviewOptions: false,
+                        disableNotification: Vars.CurrentConf.DisableNotifications,
+                        replyParameters: update.Message.MessageId).ConfigureAwait(false);
                 }
+
                 Log($"Successfully passed owner's reply to UID: {Vars.CurrentConf.ContChatTarget}", "BOT");
                 return;
             }
@@ -53,9 +64,9 @@ namespace pmcenter
                 update.Message.From.Id,
                 Vars.CurrentLang.Message_CommandNotReplying,
                 parseMode: ParseMode.Markdown,
-            linkPreviewOptions: false,
-            disableNotification: Vars.CurrentConf.DisableNotifications,
-            replyParameters: update.Message.MessageId).ConfigureAwait(false);
+                linkPreviewOptions: false,
+                disableNotification: Vars.CurrentConf.DisableNotifications,
+                replyParameters: update.Message.MessageId).ConfigureAwait(false);
         }
     }
 }

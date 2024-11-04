@@ -14,8 +14,8 @@ namespace pmcenter.Commands
 
         public async Task<bool> ExecuteAsync(TelegramBotClient botClient, Update update)
         {
-            var confWritable = !(new FileInfo(Vars.ConfFile)).IsReadOnly;
-            var langWritable = !(new FileInfo(Vars.LangFile)).IsReadOnly;
+            bool confWritable = !new FileInfo(Vars.ConfFile).IsReadOnly;
+            bool langWritable = !new FileInfo(Vars.LangFile).IsReadOnly;
             _ = await botClient.SendTextMessageAsync(
                 update.Message.From.Id,
                 Vars.CurrentLang.Message_ConfAccess
@@ -23,9 +23,9 @@ namespace pmcenter.Commands
                     .Replace("$2", langWritable.ToString())
                 ,
                 parseMode: ParseMode.Markdown,
-                            linkPreviewOptions: false,
-                            disableNotification: Vars.CurrentConf.DisableNotifications,
-                            replyParameters: update.Message.MessageId).ConfigureAwait(false);
+                linkPreviewOptions: false,
+                disableNotification: Vars.CurrentConf.DisableNotifications,
+                replyParameters: update.Message.MessageId).ConfigureAwait(false);
             return true;
         }
     }

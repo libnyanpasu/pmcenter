@@ -22,6 +22,9 @@ namespace pmcenter.CallbackActions
             return Vars.CurrentLang.Message_Action_Pardoned.Replace("$1", GetComposedUsername(user, false));
         }
 
-        public bool IsAvailable(Update update) => IsBanned(update);
+        public bool IsAvailable(Update update)
+        {
+            return IsBanned(update);
+        }
     }
 }

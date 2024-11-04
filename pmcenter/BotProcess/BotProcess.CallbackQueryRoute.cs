@@ -1,6 +1,6 @@
-﻿using pmcenter.CallbackActions;
-using System;
+﻿using System;
 using System.Threading.Tasks;
+using pmcenter.CallbackActions;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -13,21 +13,36 @@ namespace pmcenter
     {
         private static async Task CallbackQueryRoute(Update update)
         {
-            if (update.CallbackQuery == null) return;
-            if (update.CallbackQuery.From.IsBot) return;
+            if (update.CallbackQuery == null)
+            {
+                return;
+            }
+
+            if (update.CallbackQuery.From.IsBot)
+            {
+                return;
+            }
+
             try
             {
-                var link = GetLinkByOwnerMsgID(update.CallbackQuery.Message.ReplyToMessage.MessageId);
-                if (link == null) throw new NullReferenceException(Vars.CurrentLang.Message_Action_LinkNotFound);
-                var result = await CallbackProcess.DoCallback(update.CallbackQuery.Data, link.TGUser, update.CallbackQuery.Message);
+                Conf.MessageIDLink link = GetLinkByOwnerMsgID(update.CallbackQuery.Message.ReplyToMessage.MessageId);
+                if (link == null)
+                {
+                    throw new NullReferenceException(Vars.CurrentLang.Message_Action_LinkNotFound);
+                }
+
+                CallbackActionResult result = await CallbackProcess.DoCallback(update.CallbackQuery.Data, link.TGUser,
+                    update.CallbackQuery.Message);
                 // prompt result
                 await Vars.Bot.AnswerCallbackQueryAsync(update.CallbackQuery.Id, result.Status, result.ShowAsAlert);
                 // update existing buttons
                 if (result.Succeeded)
+                {
                     _ = await Vars.Bot.EditMessageReplyMarkupAsync(
                         update.CallbackQuery.Message.Chat.Id,
                         update.CallbackQuery.Message.MessageId,
                         new InlineKeyboardMarkup(CallbackProcess.GetAvailableButtons(update)));
+                }
             }
             catch (Exception ex)
             {

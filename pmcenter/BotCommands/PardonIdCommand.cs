@@ -22,21 +22,22 @@ namespace pmcenter.Commands
                 _ = await botClient.SendTextMessageAsync(
                     update.Message.From.Id,
                     Vars.CurrentLang.Message_UserPardoned,
-                   parseMode: ParseMode.Markdown,
-                            linkPreviewOptions: false,
-                            disableNotification: Vars.CurrentConf.DisableNotifications,
-                            replyParameters: update.Message.MessageId).ConfigureAwait(false);
+                    parseMode: ParseMode.Markdown,
+                    linkPreviewOptions: false,
+                    disableNotification: Vars.CurrentConf.DisableNotifications,
+                    replyParameters: update.Message.MessageId).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
                 _ = await botClient.SendTextMessageAsync(
                     update.Message.From.Id,
                     Vars.CurrentLang.Message_GeneralFailure.Replace("$1", ex.Message),
-                   parseMode: ParseMode.Markdown,
-                            linkPreviewOptions: false,
-                            disableNotification: Vars.CurrentConf.DisableNotifications,
-                            replyParameters: update.Message.MessageId).ConfigureAwait(false);
+                    parseMode: ParseMode.Markdown,
+                    linkPreviewOptions: false,
+                    disableNotification: Vars.CurrentConf.DisableNotifications,
+                    replyParameters: update.Message.MessageId).ConfigureAwait(false);
             }
+
             return true;
         }
     }

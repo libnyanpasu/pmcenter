@@ -9,6 +9,7 @@ namespace pmcenter
                 UID = -1;
                 MessageCount = 0;
             }
+
             public long UID { get; set; }
             public int MessageCount { get; set; }
         }

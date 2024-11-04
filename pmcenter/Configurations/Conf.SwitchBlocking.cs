@@ -3,7 +3,7 @@ namespace pmcenter
     public static partial class Conf
     {
         /// <summary>
-        /// Switch 'blocking' status, returning current status.
+        ///     Switch 'blocking' status, returning current status.
         /// </summary>
         /// <returns></returns>
         public static bool SwitchBlocking()
@@ -13,11 +13,9 @@ namespace pmcenter
                 Vars.CurrentConf.KeywordBanning = false;
                 return false;
             }
-            else
-            {
-                Vars.CurrentConf.KeywordBanning = true;
-                return true;
-            }
+
+            Vars.CurrentConf.KeywordBanning = true;
+            return true;
         }
     }
 }

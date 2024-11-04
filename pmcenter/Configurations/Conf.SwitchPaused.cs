@@ -3,7 +3,7 @@ namespace pmcenter
     public static partial class Conf
     {
         /// <summary>
-        /// Switch 'forwarding' status, returning current status.
+        ///     Switch 'forwarding' status, returning current status.
         /// </summary>
         /// <returns></returns>
         public static bool SwitchPaused()
@@ -13,11 +13,9 @@ namespace pmcenter
                 Vars.CurrentConf.ForwardingPaused = false;
                 return false;
             }
-            else
-            {
-                Vars.CurrentConf.ForwardingPaused = true;
-                return true;
-            }
+
+            Vars.CurrentConf.ForwardingPaused = true;
+            return true;
         }
     }
 }

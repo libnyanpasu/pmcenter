@@ -7,6 +7,7 @@ namespace pmcenter.CommandLines
     {
         public string Prefix => "setup";
         public bool ExitAfterExecution => true;
+
         public async Task<bool> Process()
         {
             Log("Launching setup wizard...", "CMD");

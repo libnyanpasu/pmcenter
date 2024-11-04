@@ -9,41 +9,44 @@ namespace pmcenter.CallbackActions
 {
     internal class CallbackManager
     {
-        private readonly List<ICallbackAction> callbacks = new List<ICallbackAction>();
-
-        public CallbackManager()
-        { }
+        private readonly List<ICallbackAction> callbacks = new();
 
         public ICallbackAction this[string prefix] => callbacks.FirstOrDefault(x => x.Name.StartsWith(prefix));
 
         public void RegisterAction(ICallbackAction action)
         {
             if (callbacks.Any(x => x.Name == action.Name))
-                throw new ArgumentException($"An action named \"{action.Name}\" is already registered.", nameof(action));
+            {
+                throw new ArgumentException($"An action named \"{action.Name}\" is already registered.",
+                    nameof(action));
+            }
+
             callbacks.Add(action);
         }
 
         public async Task<string> Execute(string actionName, User user, Message msg)
         {
-            foreach (var action in callbacks)
+            foreach (ICallbackAction action in callbacks)
             {
                 if (action.Name == actionName)
                 {
                     return await action.Action(user, msg);
                 }
             }
+
             return null;
         }
 
         public List<List<InlineKeyboardButton>> GetAvailableButtons(Update update)
         {
-            var result = new List<List<InlineKeyboardButton>>();
-            foreach (var action in callbacks)
+            List<List<InlineKeyboardButton>> result = new();
+            foreach (ICallbackAction action in callbacks)
+            {
                 if (action.IsAvailable(update))
                 {
-                    var oneLineKeyboard = new List<InlineKeyboardButton>
+                    List<InlineKeyboardButton> oneLineKeyboard = new List<InlineKeyboardButton>
                     {
-                        new InlineKeyboardButton()
+                        new()
                         {
                             CallbackData = action.Name,
                             Text = action.ButtonName
@@ -51,6 +54,8 @@ namespace pmcenter.CallbackActions
                     };
                     result.Add(oneLineKeyboard);
                 }
+            }
+
             return result;
         }
     }

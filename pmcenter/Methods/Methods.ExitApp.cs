@@ -15,7 +15,7 @@ namespace pmcenter
             Vars.Bot.OnUpdate -= BotProcess.OnUpdate;
             Vars.Bot.OnError -= BotProcess.OnError;
             Log("Waiting for background workers to exit (timeout: 10s)...");
-            var sw = new Stopwatch();
+            Stopwatch sw = new Stopwatch();
             sw.Start();
 
             Vars.IsShuttingDown = true;
@@ -23,9 +23,14 @@ namespace pmcenter
             await Conf.SaveConf();
             while (Vars.IsPerformanceTestExecuting)
             {
-                if (sw.ElapsedMilliseconds >= 10000) Environment.Exit(16);
+                if (sw.ElapsedMilliseconds >= 10000)
+                {
+                    Environment.Exit(16);
+                }
+
                 Thread.Sleep(50);
             }
+
             Log("[OK] Shut down performance tester.");
 
             Thread[] threads =
@@ -48,16 +53,21 @@ namespace pmcenter
 
             for (int i = 0; i < threads.Length; i++)
             {
-                var thread = threads[i];
+                Thread thread = threads[i];
                 if (thread != null && thread.IsAlive)
                 {
                     thread.Interrupt();
                     while (thread.IsAlive)
                     {
-                        if (sw.ElapsedMilliseconds >= 10000) Environment.Exit(16);
+                        if (sw.ElapsedMilliseconds >= 10000)
+                        {
+                            Environment.Exit(16);
+                        }
+
                         Thread.Sleep(50);
                     }
                 }
+
                 Log($"[OK] Shut down {threadNames[i]}.");
             }
 

@@ -8,17 +8,18 @@ namespace pmcenter
         {
             public class Update
             {
+                public string Details;
+                public List<string> LangCode;
+                public string UpdateArchiveAddress;
+                public string UpdateChannel;
+
                 public Update()
                 {
                     Details = "(Load failed.)";
-                    LangCode = new List<string>() { "en.integrated" };
+                    LangCode = new List<string> { "en.integrated" };
                     UpdateChannel = "master";
                     UpdateArchiveAddress = "https://see.wtf/pmcenter-update";
                 }
-                public string Details;
-                public List<string> LangCode;
-                public string UpdateChannel;
-                public string UpdateArchiveAddress;
             }
         }
     }

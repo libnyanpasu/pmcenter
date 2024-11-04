@@ -11,13 +11,15 @@ namespace pmcenter
         {
             Log("Checking language file's integrity...", "LANG");
             if (!File.Exists(Vars.LangFile))
-            { // STEP 1, DETECT EXISTENCE.
+            {
+                // STEP 1, DETECT EXISTENCE.
                 Log("Language file not found. Creating...", "LANG", LogLevel.Warning);
                 Vars.CurrentLang = new Language();
                 _ = await SaveLang(true).ConfigureAwait(false); // Then the app will exit, do nothing.
             }
             else
-            { // STEP 2, READ TEST.
+            {
+                // STEP 2, READ TEST.
                 try
                 {
                     _ = await ReadLang(false).ConfigureAwait(false); // Read but don't apply.
@@ -31,6 +33,7 @@ namespace pmcenter
                     _ = await SaveLang(true).ConfigureAwait(false); // Then the app will exit, do nothing.
                 }
             }
+
             Log("Integrity test finished!", "LANG");
         }
     }

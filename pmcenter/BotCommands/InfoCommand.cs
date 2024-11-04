@@ -18,8 +18,9 @@ namespace pmcenter.Commands
             {
                 return false;
             }
-            var targetMessage = update.Message.ReplyToMessage;
-            var sb = new StringBuilder("ℹ *Message Info*\n📩 *Sender*: [");
+
+            Message targetMessage = update.Message.ReplyToMessage;
+            StringBuilder sb = new StringBuilder("ℹ *Message Info*\n📩 *Sender*: [");
             if (Vars.CurrentConf.UseUsernameInMsgInfo)
             {
                 sb.Append(targetMessage.ForwardFrom.FirstName);
@@ -30,6 +31,7 @@ namespace pmcenter.Commands
             {
                 sb.Append("Here");
             }
+
             sb.Append("](tg://user?id=");
             sb.Append(targetMessage.ForwardFrom.Id);
             sb.Append(")\n👤 User ID: `");
@@ -43,7 +45,7 @@ namespace pmcenter.Commands
             sb.Append("`");
 
             sb.Append("\n\n➕ *Additional Info*");
-            sb.Append("\n📼 Message Type: " + targetMessage.Type.ToString());
+            sb.Append("\n📼 Message Type: " + targetMessage.Type);
             if (targetMessage.Document != null)
             {
                 sb.Append("\n📛 File Name: `");
@@ -98,15 +100,17 @@ namespace pmcenter.Commands
                 sb.Append(targetMessage.Dice.Value);
                 sb.Append("`");
             }
-            sb.Append("\n\n_Additional information is available for a limited set of message types, including: Audios, Documents(Files), Dices, Locations, Photos and Stickers._");
+
+            sb.Append(
+                "\n\n_Additional information is available for a limited set of message types, including: Audios, Documents(Files), Dices, Locations, Photos and Stickers._");
 
             _ = await botClient.SendTextMessageAsync(
                 update.Message.From.Id,
                 sb.ToString(),
-               parseMode: ParseMode.Markdown,
-                            linkPreviewOptions: false,
-                            disableNotification: Vars.CurrentConf.DisableNotifications,
-                            replyParameters: update.Message.MessageId).ConfigureAwait(false);
+                parseMode: ParseMode.Markdown,
+                linkPreviewOptions: false,
+                disableNotification: Vars.CurrentConf.DisableNotifications,
+                replyParameters: update.Message.MessageId).ConfigureAwait(false);
             return true;
         }
     }

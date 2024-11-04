@@ -4,19 +4,29 @@ namespace pmcenter
     {
         public static bool IsKeywordBanned(string sentence)
         {
-            if (!Vars.CurrentConf.KeywordBanning) return false;
+            if (!Vars.CurrentConf.KeywordBanning)
+            {
+                return false;
+            }
 
-            foreach (var blocked in Vars.CurrentConf.BannedKeywords)
+            foreach (string blocked in Vars.CurrentConf.BannedKeywords)
             {
                 if (Vars.CurrentConf.EnableRegex)
                 {
-                    if (IsRegexMatch(sentence, blocked)) return true;
+                    if (IsRegexMatch(sentence, blocked))
+                    {
+                        return true;
+                    }
                 }
                 else
                 {
-                    if (sentence.Contains(blocked)) return true;
+                    if (sentence.Contains(blocked))
+                    {
+                        return true;
+                    }
                 }
             }
+
             return false;
         }
     }

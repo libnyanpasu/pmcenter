@@ -11,19 +11,20 @@ namespace pmcenter
             {
                 if (Vars.GitHubReleases)
                 {
-                    Log("This distribution of pmcenter is released via GitHub releases. Automatic updates are not supported yet.", LogLevel.Warning);
+                    Log(
+                        "This distribution of pmcenter is released via GitHub releases. Automatic updates are not supported yet.",
+                        LogLevel.Warning);
                     return false;
                 }
-                var currentVersion = Vars.AppVer;
-                var currentLatest = new Version(CurrentUpdate.Latest);
+
+                Version currentVersion = Vars.AppVer;
+                Version currentLatest = new Version(CurrentUpdate.Latest);
                 if (currentLatest > currentVersion)
                 {
                     return true;
                 }
-                else
-                {
-                    return false;
-                }
+
+                return false;
             }
         }
     }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace pmcenter
@@ -9,7 +10,7 @@ namespace pmcenter
         {
             public static async Task<byte[]> GetBytesAsync(Uri uri)
             {
-                using var content = await GetHttpContentAsync(uri).ConfigureAwait(false);
+                using HttpContent content = await GetHttpContentAsync(uri).ConfigureAwait(false);
                 return await content.ReadAsByteArrayAsync().ConfigureAwait(false);
             }
         }

@@ -8,15 +8,19 @@ namespace pmcenter.CommandLines
     {
         public string Prefix => "update";
         public bool ExitAfterExecution => true;
+
         public async Task<bool> Process()
         {
             Log($"Application version: {Vars.AppVer}", "CMD");
             Log("Checking for updates...", "CMD");
-            Log("Custom update channels and languages are currently unsupported in command line mode, will use \"master\" channel with English.", "CMD");
-            var latest = await CheckForUpdatesAsync().ConfigureAwait(false);
+            Log(
+                "Custom update channels and languages are currently unsupported in command line mode, will use \"master\" channel with English.",
+                "CMD");
+            Update2 latest = await CheckForUpdatesAsync().ConfigureAwait(false);
             if (IsNewerVersionAvailable(latest))
             {
-                Log($"Newer version found: {latest.Latest}, main changes:\n{latest.UpdateCollection[0].Details}", "CMD");
+                Log($"Newer version found: {latest.Latest}, main changes:\n{latest.UpdateCollection[0].Details}",
+                    "CMD");
                 Log("Updating...", "CMD");
                 await DownloadUpdatesAsync(latest).ConfigureAwait(false);
                 await DownloadLangAsync().ConfigureAwait(false);
@@ -24,8 +28,11 @@ namespace pmcenter.CommandLines
             }
             else
             {
-                Log($"No newer version found.\nCurrently installed version: {Vars.AppVer}\nThe latest version is: {latest.Latest}", "CMD");
+                Log(
+                    $"No newer version found.\nCurrently installed version: {Vars.AppVer}\nThe latest version is: {latest.Latest}",
+                    "CMD");
             }
+
             return true;
         }
     }

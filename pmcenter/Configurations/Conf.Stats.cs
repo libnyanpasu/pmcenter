@@ -11,6 +11,7 @@ namespace pmcenter
                 TotalForwardedToOwner = 0;
                 TotalForwardedFromOwner = 0;
             }
+
             public int TotalMessagesReceived { get; set; }
             public int TotalCommandsReceived { get; set; }
             public int TotalForwardedToOwner { get; set; }

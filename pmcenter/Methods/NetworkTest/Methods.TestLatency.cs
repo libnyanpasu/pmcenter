@@ -10,12 +10,12 @@ namespace pmcenter
     {
         public static async Task<TimeSpan> TestLatency(string target)
         {
-            var reqSw = new Stopwatch();
+            Stopwatch reqSw = new Stopwatch();
             try
             {
-                var client = new HttpClient();
+                HttpClient client = new HttpClient();
                 reqSw.Start();
-                var response = await client.GetAsync(target).ConfigureAwait(false);
+                HttpResponseMessage response = await client.GetAsync(target).ConfigureAwait(false);
                 response.EnsureSuccessStatusCode();
                 reqSw.Stop();
                 return reqSw.Elapsed;

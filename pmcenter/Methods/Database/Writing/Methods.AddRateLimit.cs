@@ -8,12 +8,12 @@ namespace pmcenter
         {
             if (IsRateDataTracking(uid))
             {
-                var dataId = GetRateDataIndexByID(uid);
+                int dataId = GetRateDataIndexByID(uid);
                 Vars.RateLimits[dataId].MessageCount += 1;
             }
             else
             {
-                var data = new RateData
+                RateData data = new RateData
                 {
                     UID = uid,
                     MessageCount = 1

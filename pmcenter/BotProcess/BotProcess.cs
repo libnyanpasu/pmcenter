@@ -4,9 +4,9 @@
 // Copyright (C) The pmcenter authors. Licensed under the Apache License (Version 2.0).
 */
 
-using pmcenter.Commands;
 using System;
 using System.Threading.Tasks;
+using pmcenter.Commands;
 using Telegram.Bot;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
@@ -17,7 +17,7 @@ namespace pmcenter
 {
     public static partial class BotProcess
     {
-        private static readonly CommandRouter commandManager = new CommandRouter();
+        private static readonly CommandRouter commandManager = new();
 
         static BotProcess()
         {
@@ -64,15 +64,26 @@ namespace pmcenter
             try
             {
                 if (Vars.CurrentConf.DetailedMsgLogging && update.Type == UpdateType.Message)
-                    Log($"OnUpdate() triggered: UpdType: {update.Type}, UpdID: {update.Id}, ChatId: {update.Message.Chat.Id}, Username: {update.Message.Chat.Username}, FromID: {update.Message.From.Id}, FromUsername: {update.Message.From.Username}", "BOT-DETAILED", LogLevel.Info);
+                {
+                    Log(
+                        $"OnUpdate() triggered: UpdType: {update.Type}, UpdID: {update.Id}, ChatId: {update.Message.Chat.Id}, Username: {update.Message.Chat.Username}, FromID: {update.Message.From.Id}, FromUsername: {update.Message.From.Username}",
+                        "BOT-DETAILED");
+                }
 
                 switch (update.Type)
                 {
-                    case UpdateType.Message: await MessageRoute(update); break;
-                    case UpdateType.CallbackQuery: await CallbackQueryRoute(update); break;
+                    case UpdateType.Message:
+                        await MessageRoute(update);
+                        break;
+                    case UpdateType.CallbackQuery:
+                        await CallbackQueryRoute(update);
+                        break;
                     default:
                         if (Vars.CurrentConf.DetailedMsgLogging)
+                        {
                             Log($"Ditching unknown update type ({update.Type})...", "BOT-DETAILED");
+                        }
+
                         return;
                 }
             }
@@ -83,10 +94,9 @@ namespace pmcenter
                 {
                     try
                     {
-
                         _ = await Vars.Bot.SendTextMessageAsync(
-                            chatId: Vars.CurrentConf.OwnerUID,
-                            text: Vars.CurrentLang.Message_GeneralFailure.Replace("$1", ex.ToString()),
+                            Vars.CurrentConf.OwnerUID,
+                            Vars.CurrentLang.Message_GeneralFailure.Replace("$1", ex.ToString()),
                             parseMode: ParseMode.Markdown,
                             linkPreviewOptions: false,
                             disableNotification: Vars.CurrentConf.DisableNotifications

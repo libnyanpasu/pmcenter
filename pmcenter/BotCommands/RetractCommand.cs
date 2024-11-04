@@ -19,13 +19,15 @@ namespace pmcenter.Commands
             {
                 return false;
             }
-            var selectedMsgId = update.Message.ReplyToMessage.MessageId;
+
+            int selectedMsgId = update.Message.ReplyToMessage.MessageId;
             Log($"Retracting message for user {update.Message.From.Id}", "BOT");
             if (update.Message.From.Id == Vars.CurrentConf.OwnerUID)
-            { // owner retracting
+            {
+                // owner retracting
                 if (IsOwnerRetractionAvailable(selectedMsgId))
                 {
-                    var link = GetLinkByOwnerMsgID(selectedMsgId);
+                    Conf.MessageIDLink link = GetLinkByOwnerMsgID(selectedMsgId);
                     await botClient.DeleteMessageAsync(link.TGUser.Id, link.UserSessionMessageID).ConfigureAwait(false);
                     Log($"Successfully retracted message from {GetComposedUsername(link.TGUser, true, true)}.", "BOT");
                 }
@@ -34,9 +36,9 @@ namespace pmcenter.Commands
                     _ = await botClient.SendTextMessageAsync(update.Message.From.Id,
                         Vars.CurrentLang.Message_FeatureNotAvailable,
                         parseMode: ParseMode.Markdown,
-                            linkPreviewOptions: false,
-                            disableNotification: Vars.CurrentConf.DisableNotifications,
-                            replyParameters: update.Message.MessageId).ConfigureAwait(false);
+                        linkPreviewOptions: false,
+                        disableNotification: Vars.CurrentConf.DisableNotifications,
+                        replyParameters: update.Message.MessageId).ConfigureAwait(false);
                     return true;
                 }
             }
@@ -44,29 +46,34 @@ namespace pmcenter.Commands
             {
                 if (IsUserRetractionAvailable(selectedMsgId))
                 {
-                    var link = GetLinkByUserMsgID(selectedMsgId);
-                    await botClient.DeleteMessageAsync(Vars.CurrentConf.OwnerUID, link.OwnerSessionMessageID).ConfigureAwait(false);
-                    Log($"Successfully retracted message from owner.", "BOT");
+                    Conf.MessageIDLink link = GetLinkByUserMsgID(selectedMsgId);
+                    await botClient.DeleteMessageAsync(Vars.CurrentConf.OwnerUID, link.OwnerSessionMessageID)
+                        .ConfigureAwait(false);
+                    Log("Successfully retracted message from owner.", "BOT");
                     if (Vars.CurrentConf.EnableActions && link.OwnerSessionActionMessageID != -1)
-                        await botClient.DeleteMessageAsync(Vars.CurrentConf.OwnerUID, link.OwnerSessionActionMessageID).ConfigureAwait(false);
+                    {
+                        await botClient.DeleteMessageAsync(Vars.CurrentConf.OwnerUID, link.OwnerSessionActionMessageID)
+                            .ConfigureAwait(false);
+                    }
                 }
                 else
                 {
                     _ = await botClient.SendTextMessageAsync(update.Message.From.Id,
                         Vars.CurrentLang.Message_FeatureNotAvailable,
                         parseMode: ParseMode.Markdown,
-            linkPreviewOptions: false,
-            disableNotification: Vars.CurrentConf.DisableNotifications,
-            replyParameters: update.Message.MessageId).ConfigureAwait(false);
+                        linkPreviewOptions: false,
+                        disableNotification: Vars.CurrentConf.DisableNotifications,
+                        replyParameters: update.Message.MessageId).ConfigureAwait(false);
                     return true;
                 }
             }
+
             _ = await botClient.SendTextMessageAsync(update.Message.From.Id,
                 Vars.CurrentLang.Message_Retracted,
                 parseMode: ParseMode.Markdown,
-            linkPreviewOptions: false,
-            disableNotification: Vars.CurrentConf.DisableNotifications,
-            replyParameters: update.Message.MessageId).ConfigureAwait(false);
+                linkPreviewOptions: false,
+                disableNotification: Vars.CurrentConf.DisableNotifications,
+                replyParameters: update.Message.MessageId).ConfigureAwait(false);
             return true;
         }
     }

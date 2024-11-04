@@ -12,7 +12,7 @@ namespace pmcenter
             while (!Vars.IsShuttingDown)
             {
                 Vars.RateLimiterStatus = ThreadStatus.Working;
-                foreach (var data in Vars.RateLimits)
+                foreach (RateData data in Vars.RateLimits)
                 {
                     if (data.MessageCount > Vars.CurrentConf.AutoBanThreshold && Vars.CurrentConf.AutoBan)
                     {
@@ -20,10 +20,18 @@ namespace pmcenter
                         _ = await SaveConf(false, true).ConfigureAwait(false);
                         Log($"Banning user: {data.UID}", "RATELIMIT");
                     }
+
                     data.MessageCount = 0;
                 }
+
                 Vars.RateLimiterStatus = ThreadStatus.Standby;
-                try { Thread.Sleep(30000); } catch { }
+                try
+                {
+                    Thread.Sleep(30000);
+                }
+                catch
+                {
+                }
             }
         }
     }

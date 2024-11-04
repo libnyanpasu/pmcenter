@@ -10,6 +10,7 @@ namespace pmcenter
             {
                 Locales = new List<LocaleMirror>();
             }
+
             public List<LocaleMirror> Locales { get; set; }
         }
     }

@@ -11,6 +11,7 @@ namespace pmcenter
                 Username = null;
                 ProxyPass = null;
             }
+
             public string ServerName { get; set; }
             public int ServerPort { get; set; }
             public string? Username { get; set; }

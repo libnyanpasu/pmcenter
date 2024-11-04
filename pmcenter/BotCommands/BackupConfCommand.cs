@@ -6,6 +6,7 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using static pmcenter.Methods;
 using static pmcenter.Methods.Logging;
+using File = System.IO.File;
 
 namespace pmcenter.Commands
 {
@@ -17,16 +18,16 @@ namespace pmcenter.Commands
 
         public async Task<bool> ExecuteAsync(TelegramBotClient botClient, Update update)
         {
-            var randomFilename = $"pmcenter.{DateTime.Now:yyyy-dd-M-HH-mm-ss}#{GetRandomString(6)}.json";
+            string randomFilename = $"pmcenter.{DateTime.Now:yyyy-dd-M-HH-mm-ss}#{GetRandomString(6)}.json";
             Log($"Backing up configurations, filename: {Path.Combine(Vars.AppDirectory, randomFilename)}", "BOT");
-            System.IO.File.Copy(Vars.ConfFile, randomFilename);
+            File.Copy(Vars.ConfFile, randomFilename);
             _ = await botClient.SendTextMessageAsync(
                 update.Message.From.Id,
                 Vars.CurrentLang.Message_BackupComplete.Replace("$1", randomFilename),
                 parseMode: ParseMode.Markdown,
-                            linkPreviewOptions: false,
-                            disableNotification: Vars.CurrentConf.DisableNotifications,
-                            replyParameters: update.Message.MessageId).ConfigureAwait(false);
+                linkPreviewOptions: false,
+                disableNotification: Vars.CurrentConf.DisableNotifications,
+                replyParameters: update.Message.MessageId).ConfigureAwait(false);
             return true;
         }
     }

@@ -6,10 +6,14 @@ namespace pmcenter
     {
         public static BanObj GetBanObjByID(long uid)
         {
-            foreach (var banned in Vars.CurrentConf.Banned)
+            foreach (BanObj banned in Vars.CurrentConf.Banned)
             {
-                if (banned.UID == uid) return banned;
+                if (banned.UID == uid)
+                {
+                    return banned;
+                }
             }
+
             return null;
         }
     }

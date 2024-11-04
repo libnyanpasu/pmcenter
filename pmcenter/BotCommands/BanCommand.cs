@@ -14,7 +14,10 @@ namespace pmcenter.Commands
 
         public async Task<bool> ExecuteAsync(TelegramBotClient botClient, Update update)
         {
-            if (update.Message.ReplyToMessage == null || update.Message.ReplyToMessage.ForwardFrom == null) return false;
+            if (update.Message.ReplyToMessage == null || update.Message.ReplyToMessage.ForwardFrom == null)
+            {
+                return false;
+            }
 
             BanUser(update.Message.ReplyToMessage.ForwardFrom.Id);
             _ = await Conf.SaveConf(false, true).ConfigureAwait(false);
@@ -22,9 +25,9 @@ namespace pmcenter.Commands
                 update.Message.From.Id,
                 Vars.CurrentLang.Message_UserBanned,
                 parseMode: ParseMode.Markdown,
-                            linkPreviewOptions: false,
-                            disableNotification: Vars.CurrentConf.DisableNotifications,
-                            replyParameters: update.Message.MessageId).ConfigureAwait(false);
+                linkPreviewOptions: false,
+                disableNotification: Vars.CurrentConf.DisableNotifications,
+                replyParameters: update.Message.MessageId).ConfigureAwait(false);
             return true;
         }
     }

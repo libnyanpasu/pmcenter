@@ -8,7 +8,7 @@ namespace pmcenter
             Standby = 1,
             Working = 2,
             Stopped = 3,
-            Error = 4,
+            Error = 4
         }
     }
 }

@@ -4,10 +4,14 @@ namespace pmcenter
     {
         public static int GetRateDataIndexByID(long uid)
         {
-            foreach (var data in Vars.RateLimits)
+            foreach (Conf.RateData data in Vars.RateLimits)
             {
-                if (data.UID == uid) { return Vars.RateLimits.IndexOf(data); }
+                if (data.UID == uid)
+                {
+                    return Vars.RateLimits.IndexOf(data);
+                }
             }
+
             return -1;
         }
     }

@@ -7,6 +7,7 @@ namespace pmcenter.CommandLines
     {
         public string Prefix => "reset";
         public bool ExitAfterExecution => true;
+
         public async Task<bool> Process()
         {
             Log("Resetting configurations...", "CMD");

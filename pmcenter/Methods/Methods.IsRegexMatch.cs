@@ -10,7 +10,11 @@ namespace pmcenter
         {
             try
             {
-                if (Regex.IsMatch(source, expression, RegexOptions.None)) return true;
+                if (Regex.IsMatch(source, expression, RegexOptions.None))
+                {
+                    return true;
+                }
+
                 return false;
             }
             catch (Exception ex)

@@ -8,7 +8,7 @@ namespace pmcenter
         {
             if (!IsBanned(uid))
             {
-                var banned = new BanObj
+                BanObj banned = new BanObj
                 {
                     UID = uid
                 };
